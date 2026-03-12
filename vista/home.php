@@ -4,10 +4,9 @@ require_once "../controladores/productoController.php";
 $productoController = new ProductoController($conexion);
 $productos = $productoController->mostrarProducto();
 
-if(isset($_POST['product'])) {
-    $productId = $_POST['product'];
-    set_cookie("product_$productId", $productId, time() + (86400 * 30), "/");
-}
+/*if(isset($_POST['product'])) {
+    set_cookie("product_$_POST['product']", 1, time() + (86400 * 30), "/");
+}*/
 
 ?><!DOCTYPE html>
 <html lang="es">
