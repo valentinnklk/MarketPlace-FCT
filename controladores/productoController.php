@@ -11,5 +11,9 @@ class ProductoController {
         $producto = new mostrarProducto($this->conexion);
         return $producto->mostrarProducto();
     }
+    public function mostrarProductoPorId($id) {
+        $productos = new mostrarProducto($this->conexion);
+        return $productos->mostrarProductoPorId($id);
+    }
 }   
 ?>

@@ -26,43 +26,33 @@ $productos = $productoController->mostrarProducto();
         <?php foreach ($productos as $producto): ?>
 
             <div class="col-md-4 mb-4">
-
                 <div class="card shadow-sm h-100">
-
                     <div class="card-body">
-
                         <h5 class="card-title">
-                            <?php echo $producto['titulo']; ?>
-                        </h5>
-
+                        <button class="btn btn-sm btn-outline-primary">
+                            <a href="producto.php?id=<?php echo $producto['id']; ?>"> <?php echo $producto['titulo']; ?> </a>
+                        </button>
+                                
+                            </h5>
                         <p class="card-text text-muted">
                             <?php echo $producto['descripcion']; ?>
                         </p>
-
                         <p class="fw-bold text-success">
                             $<?php echo $producto['precio']; ?>
                         </p>
-
                         <p>
                             <span class="badge bg-secondary">
                                 <?php echo $producto['estado_producto']; ?>
                             </span>
                         </p>
-
                         <p class="text-muted small">
                             Vendedor: <?php echo $producto['vendedor']; ?>
                         </p>
-
                     </div>
-
                 </div>
-
             </div>
-
         <?php endforeach; ?>
-
     </div>
-
 </div>
 
 </body>
