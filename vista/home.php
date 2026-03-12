@@ -50,7 +50,8 @@ $productos = $productoController->mostrarProducto();
                             </span>
                         </p>
                         <p class="text-muted small">
-                            Vendedor: <?php echo $producto['vendedor']; ?>
+                            <a href="verUsuarios.php?id=<?php echo $producto['vendedor_id']; ?>">
+                                Vendedor: <?php echo $producto['vendedor']; ?></a>
                         </p>
                         <form method="post" action="">
                             <input type="hidden" name="product" value="<?php echo $producto['id']; ?>">

@@ -10,6 +10,7 @@ class mostrarProducto{
         public function mostrarProducto(){
 
     $sql = "SELECT 
+        productos.vendedor_id,
         productos.id,
         productos.titulo,
         productos.descripcion,
