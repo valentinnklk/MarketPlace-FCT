@@ -44,5 +44,17 @@ class mostrarProducto{
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
- 
+    public function crearProducto($vendedor_id, $titulo, $descripcion, $precio, $estado_producto) {
+        $sql = "INSERT INTO productos (titulo, descripcion, precio, estado_producto, vendedor_id) 
+                VALUES (:titulo, :descripcion, :precio, :estado_producto, :vendedor_id)";
+        
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bindParam(':titulo', $titulo);
+        $stmt->bindParam(':descripcion', $descripcion);
+        $stmt->bindParam(':precio', $precio);
+        $stmt->bindParam(':estado_producto', $estado_producto);
+        $stmt->bindParam(':vendedor_id', $vendedor_id);
+        
+        return $stmt->execute();
+    }
 }
