@@ -1,6 +1,6 @@
 <?php
 
-header("Location: vista/verUsuarios.php");
+header("Location: vista/home.php");
 exit();
 
 ?>
