@@ -1,1 +1,15 @@
 vfvr
+
+Alejandro Bratu:
+marketplace.sql
+
+MODELO/usuariosModelo.php
+
+CONTROLADORES/panelAdministracionControlador.php
+CONTROLADORES/registroControlador.php
+CONTROLADORES/loginControlador.php
+CONTROLADORES/validacionUsuarios.js
+
+VISTA/panelAdministracion.php
+VISTA/registroVista.php
+VISTA/loginVista.php

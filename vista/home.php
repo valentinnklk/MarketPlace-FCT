@@ -28,6 +28,7 @@ $productos = $productoController->mostrarProducto();
         <div class="d-flex gap-2 ms-auto">
             <a href="subirProducto.php" class="btn btn-success btn-sm">+ Vender</a>
             <a href="perfil.php"        class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
+            <a href="panelAdministracion.php" class="btn btn-warning btn-sm">Admin</a>
         </div>
     </div>
 </nav>
