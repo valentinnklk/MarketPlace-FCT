@@ -93,7 +93,7 @@
     </style>
 </head>
 <body>
-    <a href="homeVista.php" class="btn-home"> Volver al Home</a>
+    <a href="home.php" class="btn-home"> Volver al Home</a>
     <div class="header">
         <div class="header-left">
             <h1>PANEL DE ADMINISTRACIÓN</h1>
