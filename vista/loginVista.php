@@ -1,5 +1,7 @@
 <!-- bratu-->
-
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,9 +87,9 @@
 <body>
     <h1>Iniciar Sesión</h1>
     
-    <?php if (isset($_GET['respuestaCreacionUsu'])): ?>
+    <?php if (isset($_GET['server_msg'])): ?>
         <div class="mensaje-server <?php echo $_GET['creacion'] == 'exito' ? 'mensaje-exito' : 'mensaje-error'; ?>">
-            <?php echo htmlspecialchars($_GET['respuestaCreacionUsu']); ?>
+            <?php echo htmlspecialchars(urldecode($_GET['server_msg'])); ?>
         </div>
     <?php endif; ?>
 
@@ -112,6 +114,6 @@
         </div>
     </div>
 
-    <script src="../CONTROLADOR/validacionUsuarios.js"></script>
+    <script src="../controladores/validacionUsuarios.js"></script>
 </body>
 </html>

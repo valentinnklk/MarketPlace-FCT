@@ -13,5 +13,13 @@ class Usuario {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function comprobarUsuario($email, $contrasena){
+        $sql = "SELECT * FROM usuarios WHERE email = :email AND contrseña_hash = :contrasena";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':contrasena', $contrasena);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

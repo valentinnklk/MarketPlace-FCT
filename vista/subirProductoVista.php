@@ -26,7 +26,7 @@
 
 <div class="container mt-4" style="max-width: 680px;">
 
-    <h4 class="mb-4">Publicar producto</h4>
+    <h4 class="mb-4">Publicar servicio</h4>
 
     <!-- ERRORES -->
     <?php if (!empty($errores)): ?>
@@ -52,7 +52,7 @@
                     </label>
                     <input type="text" name="titulo" class="form-control"
                            maxlength="200"
-                           placeholder="Ej: iPhone 12 128GB negro, como nuevo"
+                           placeholder="Ej: Fontaero autónomo con experiencia"
                            value="<?php echo htmlspecialchars($_POST['titulo'] ?? ''); ?>"
                            required>
                 </div>
@@ -83,9 +83,9 @@
                 </select>
             </div>
         </div>
-
-        <!-- ESTADO -->
-        <div class="card mb-3">
+        <?php
+        /*
+        <div class="card mb-3"> 
             <div class="card-header fw-bold">⭐ Estado del producto</div>
             <div class="card-body">
                 <label class="form-label fw-semibold">
@@ -94,7 +94,6 @@
                 <select name="estado_producto" class="form-select" required>
                     <option value="">Selecciona el estado…</option>
                     <?php
-                    // Los valores coinciden con el ENUM de la tabla productos
                     $estados = [
                         'nuevo'      => '✨ Nuevo – Sin usar, con etiqueta original',
                         'como_nuevo' => '🌟 Como nuevo – Usado muy poco, sin desgaste',
@@ -108,10 +107,12 @@
                             <?php echo htmlspecialchars($etiqueta); ?>
                         </option>
                     <?php endforeach; ?>
+
                 </select>
             </div>
         </div>
-
+        */
+        ?>
         <!-- PRECIO -->
         <div class="card mb-3">
             <div class="card-header fw-bold">💶 Precio</div>

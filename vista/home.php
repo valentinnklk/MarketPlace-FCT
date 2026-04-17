@@ -75,7 +75,7 @@ $productos = $productoController->mostrarProducto();
         <?php endforeach; ?>
     </div>
 </div>
-
+<a href="../controladores/logout.php">Cerrar sesión</a>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -22,16 +22,16 @@ class ProductoModelo {
     public function guardarProducto(array $datos): int {
         $stmt = $this->conexion->prepare(
             "INSERT INTO productos
-                (vendedor_id, titulo, descripcion, precio, estado_producto, ubicacion, fecha_publicacion)
+                (vendedor_id, titulo, descripcion, precio, /*estado_producto,*/ ubicacion, fecha_publicacion)
              VALUES
-                (:vendedor_id, :titulo, :descripcion, :precio, :estado_producto, :ubicacion, NOW())"
+                (:vendedor_id, :titulo, :descripcion, :precio, /*:estado_producto,*/ :ubicacion, NOW())"
         );
         $stmt->execute([
             ':vendedor_id'     => $datos['vendedor_id'],
             ':titulo'          => $datos['titulo'],
             ':descripcion'     => $datos['descripcion'],
             ':precio'          => $datos['precio'],
-            ':estado_producto' => $datos['estado_producto'],
+            /*':estado_producto' => $datos['estado_producto'],*/
             ':ubicacion'       => $datos['ubicacion'],
         ]);
         return (int) $this->conexion->lastInsertId();

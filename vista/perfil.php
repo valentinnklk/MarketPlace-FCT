@@ -6,6 +6,8 @@
 //   - incluye el controlador
 //   - llama al método correspondiente
 
+session_start();
+require_once "../controladores/proteger.php";
 require_once '../conexion.php';
 require_once '../controladores/perfilController.php';
 

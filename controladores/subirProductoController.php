@@ -37,7 +37,7 @@ class SubirProductoController {
             'titulo'          => trim($_POST['titulo']),
             'descripcion'     => trim($_POST['descripcion']),
             'precio'          => (float) $_POST['precio'],
-            'estado_producto' => $_POST['estado_producto'],
+            /*'estado_producto' => $_POST['estado_producto'],*/
             'ubicacion'       => trim($_POST['ubicacion']),
         ];
 
@@ -66,9 +66,9 @@ class SubirProductoController {
         if (!isset($post['precio']) || $post['precio'] === '' || (float)$post['precio'] < 0)
             $errores[] = 'Introduce un precio válido.';
 
-        if (empty($post['estado_producto']))
+        /*if (empty($post['estado_producto']))
             $errores[] = 'Selecciona el estado del producto.';
-
+        */
         if (empty($post['ubicacion']))
             $errores[] = 'La ubicación es obligatoria.';
 

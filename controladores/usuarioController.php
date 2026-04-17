@@ -11,5 +11,6 @@ class UsuarioController {
         $usuario = new Usuario($this->conexion);
         return $usuario->mostrarUsuario();
     }
+
 }
 ?>
