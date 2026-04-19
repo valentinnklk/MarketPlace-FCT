@@ -6,7 +6,8 @@ require_once "../controladores/usuarioController.php";
 require_once "../controladores/servicioController.php";
 
 $servicioController = new ServicioController($conexion);
-$servicios = $servicioController->mostrarServicios();
+$servicios = $servicioController->buscar($_GET['buscar'] ?? '');
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -24,6 +25,10 @@ $servicios = $servicioController->mostrarServicios();
 
         <div class="d-flex gap-2 ms-auto">
             <a href="subirServicio.php" class="btn btn-success btn-sm">+ Ofrecer servicio</a>
+            <form action="home.php" method="GET" class="d-flex mx-auto">
+            <input type="text" name="buscar" class="form-control form-control-sm me-2" placeholder="Buscar productos..." value="<?php echo htmlspecialchars($_GET['buscar'] ?? ''); ?>"style="width: 300px;">
+            <button type="submit" class="btn btn-outline-light btn-sm">🔍</button>
+        </form>
             <a href="perfil.php"        class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
         </div>
     </div>
