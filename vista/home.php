@@ -1,14 +1,12 @@
 <?php
 // vista/home.php
-// Igual que tu home.php original pero con navbar actualizada
-// para acceder al perfil y subir producto.
 
 require_once "../conexion.php";
 require_once "../controladores/usuarioController.php";
-require_once "../controladores/productoController.php";
+require_once "../controladores/servicioController.php";
 
-$productoController = new ProductoController($conexion);
-$productos = $productoController->buscar($_GET['buscar'] ?? '');
+$servicioController = new ServicioController($conexion);
+$servicios = $servicioController->mostrarServicios();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -20,66 +18,60 @@ $productos = $productoController->buscar($_GET['buscar'] ?? '');
 
 <body class="bg-light">
 
-<!-- NAVBAR con acceso a perfil y subir producto -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
 
-        <form action="home.php" method="GET" class="d-flex mx-auto">
-            <input type="text" name="buscar" class="form-control form-control-sm me-2" placeholder="Buscar productos..." value="<?php echo htmlspecialchars($_GET['buscar'] ?? ''); ?>"style="width: 300px;">
-            <button type="submit" class="btn btn-outline-light btn-sm">🔍</button>
-        </form>
-
         <div class="d-flex gap-2 ms-auto">
-            <a href="subirProducto.php" class="btn btn-success btn-sm">+ Vender</a>
+            <a href="subirServicio.php" class="btn btn-success btn-sm">+ Ofrecer servicio</a>
             <a href="perfil.php"        class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
-            <a href="panelAdministracion.php" class="btn btn-warning btn-sm">Admin</a>
         </div>
     </div>
 </nav>
 
 <div class="container mt-5">
 
-    <h1 class="text-center mb-4">Productos</h1>
+    <h1 class="text-center mb-4">Servicios disponibles</h1>
 
     <div class="row">
-        <?php foreach ($productos as $producto): ?>
+        <?php foreach ($servicios as $servicio): ?>
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <button class="btn btn-sm btn-outline-primary">
-                                <a href="producto.php?id=<?php echo $producto['id']; ?>">
-                                    <?php echo $producto['titulo']; ?>
-                                </a>
-                            </button>
+                            <a href="servicio.php?id=<?php echo $servicio['id']; ?>" class="text-decoration-none">
+                                <?php echo htmlspecialchars($servicio['titulo']); ?>
+                            </a>
                         </h5>
                         <p class="card-text text-muted">
-                            <?php echo $producto['descripcion']; ?>
+                            <?php echo htmlspecialchars($servicio['descripcion']); ?>
                         </p>
                         <p class="fw-bold text-success">
-                            $<?php echo $producto['precio']; ?>
+                            <?php echo number_format($servicio['precio'], 2); ?> € /
+                            <?php echo htmlspecialchars($servicio['unidad_cobro']); ?>
                         </p>
                         <p>
                             <span class="badge bg-secondary">
-                                <?php echo $producto['estado_producto']; ?>
+                                <?php echo htmlspecialchars($servicio['categoria_nombre']); ?>
+                            </span>
+                            <span class="badge bg-warning text-dark">
+                                ⭐ <?php echo $servicio['valoracion_media']; ?>
                             </span>
                         </p>
                         <p class="text-muted small">
-                            <a href="verUsuarios.php?id=<?php echo $producto['vendedor_id']; ?>">
-                                Vendedor: <?php echo $producto['vendedor']; ?>
+                            <a href="verUsuarios.php?id=<?php echo $servicio['prestador_id']; ?>">
+                                Prestador: <?php echo htmlspecialchars($servicio['prestador']); ?>
                             </a>
                         </p>
-                        <form method="post" action="">
-                            <input type="hidden" name="product" value="<?php echo $producto['id']; ?>">
-                            <button type="submit" class="btn btn-sm btn-success">Agregar al Carrito</button>
-                        </form>
+                        <a href="servicio.php?id=<?php echo $servicio['id']; ?>"
+                           class="btn btn-sm btn-outline-primary w-100">Ver servicio</a>
                     </div>
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
 </div>
+
 <a href="../controladores/logout.php">Cerrar sesión</a>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
