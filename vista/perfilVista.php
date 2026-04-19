@@ -1,8 +1,8 @@
 <?php
 // vista/perfilVista.php
-// Vista HTML del perfil. Solo muestra datos.
-// Las variables vienen del PerfilController:
-// $usuario, $enVenta, $compras, $favoritos, $resenas
+// Variables que vienen del PerfilController:
+// $usuario, $serviciosOfrecidos, $contratosCliente, $contratosPrestador,
+// $favoritos, $valoraciones, $valoracionMedia
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -23,21 +23,21 @@
     </style>
 </head>
 <body class="bg-light">
-
-<!-- NAVBAR igual que home.php -->
+ 
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
         <div class="d-flex gap-2">
-            <a href="home.php"          class="btn btn-outline-light btn-sm">Inicio</a>
-            <a href="subirProducto.php" class="btn btn-success btn-sm">+ Vender</a>
-            <a href="perfil.php"        class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
+            <a href="home.php"             class="btn btn-outline-light btn-sm">Inicio</a>
+            <a href="subirServicio.php"     class="btn btn-success btn-sm">+ Ofrecer servicio</a>
+            <a href="perfil.php"           class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
         </div>
     </div>
 </nav>
-
+ 
 <div class="container mt-4">
-
+ 
     <!-- CABECERA -->
     <div class="card mb-4">
         <div class="card-body">
@@ -55,21 +55,29 @@
                     <?php if ($usuario['es_administrador']): ?>
                         <span class="badge bg-danger ms-2">Admin</span>
                     <?php endif; ?>
+                    <?php if ($valoracionMedia['total'] > 0): ?>
+                        <div class="mt-1">
+                            <span class="estrellas"><?php echo str_repeat('★', round($valoracionMedia['media'])) . str_repeat('☆', 5 - round($valoracionMedia['media'])); ?></span>
+                            <small class="text-muted ms-1">
+                                <?php echo number_format($valoracionMedia['media'], 1); ?> · <?php echo $valoracionMedia['total']; ?> valoracion<?php echo $valoracionMedia['total'] !== 1 ? 'es' : ''; ?>
+                            </small>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
-
+ 
             <!-- ESTADÍSTICAS -->
             <div class="row text-center g-2">
                 <div class="col-6 col-md-3">
                     <div class="border rounded p-2">
-                        <div class="fw-bold fs-5"><?php echo count($enVenta); ?></div>
-                        <small class="text-muted">En venta</small>
+                        <div class="fw-bold fs-5"><?php echo count($serviciosOfrecidos); ?></div>
+                        <small class="text-muted">Servicios ofrecidos</small>
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
                     <div class="border rounded p-2">
-                        <div class="fw-bold fs-5"><?php echo count($compras); ?></div>
-                        <small class="text-muted">Compras</small>
+                        <div class="fw-bold fs-5"><?php echo count($contratosCliente); ?></div>
+                        <small class="text-muted">Servicios contratados</small>
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
@@ -80,28 +88,34 @@
                 </div>
                 <div class="col-6 col-md-3">
                     <div class="border rounded p-2">
-                        <div class="fw-bold fs-5"><?php echo count($resenas); ?></div>
-                        <small class="text-muted">Reseñas</small>
+                        <div class="fw-bold fs-5"><?php echo count($valoraciones); ?></div>
+                        <small class="text-muted">Valoraciones</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+ 
     <!-- PESTAÑAS -->
-    <?php $tabActiva = $_GET['tab'] ?? 'anuncios'; ?>
-
+    <?php $tabActiva = $_GET['tab'] ?? 'servicios'; ?>
+ 
     <ul class="nav nav-pills mb-3 flex-wrap gap-1">
         <li class="nav-item">
-            <a class="nav-link <?php echo $tabActiva === 'anuncios'      ? 'active' : ''; ?>" href="?tab=anuncios">
-                🏷️ Mis anuncios
-                <span class="badge bg-secondary"><?php echo count($enVenta); ?></span>
+            <a class="nav-link <?php echo $tabActiva === 'servicios'     ? 'active' : ''; ?>" href="?tab=servicios">
+                🛠️ Mis servicios
+                <span class="badge bg-secondary"><?php echo count($serviciosOfrecidos); ?></span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link <?php echo $tabActiva === 'compras'       ? 'active' : ''; ?>" href="?tab=compras">
-                🛒 Compras
-                <span class="badge bg-secondary"><?php echo count($compras); ?></span>
+            <a class="nav-link <?php echo $tabActiva === 'contratados'   ? 'active' : ''; ?>" href="?tab=contratados">
+                📋 Contratados
+                <span class="badge bg-secondary"><?php echo count($contratosCliente); ?></span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <?php echo $tabActiva === 'recibidos'     ? 'active' : ''; ?>" href="?tab=recibidos">
+                📥 Pedidos recibidos
+                <span class="badge bg-secondary"><?php echo count($contratosPrestador); ?></span>
             </a>
         </li>
         <li class="nav-item">
@@ -111,8 +125,8 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link <?php echo $tabActiva === 'resenas'       ? 'active' : ''; ?>" href="?tab=resenas">
-                ⭐ Reseñas
+            <a class="nav-link <?php echo $tabActiva === 'valoraciones'  ? 'active' : ''; ?>" href="?tab=valoraciones">
+                ⭐ Valoraciones
             </a>
         </li>
         <li class="nav-item">
@@ -121,55 +135,63 @@
             </a>
         </li>
     </ul>
-
-    <!-- ── ANUNCIOS ── -->
-    <?php if ($tabActiva === 'anuncios'): ?>
-
+ 
+    <!-- ── MIS SERVICIOS (como prestador) ── -->
+    <?php if ($tabActiva === 'servicios'): ?>
+ 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0">Mis productos en venta</h5>
-            <a href="subirProducto.php" class="btn btn-success btn-sm">+ Nuevo anuncio</a>
+            <h5 class="mb-0">Mis servicios</h5>
+            <a href="subirServicio.php" class="btn btn-success btn-sm">+ Nuevo servicio</a>
         </div>
-
-        <?php if (empty($enVenta)): ?>
+ 
+        <?php if (empty($serviciosOfrecidos)): ?>
             <div class="alert alert-secondary text-center">
-                No tienes ningún producto en venta.
-                <a href="subirProducto.php">¡Publica el primero!</a>
+                No tienes ningún servicio publicado.
+                <a href="subirServicio.php">¡Publica el primero!</a>
             </div>
         <?php else: ?>
             <div class="row g-3">
-                <?php foreach ($enVenta as $p): ?>
+                <?php foreach ($serviciosOfrecidos as $s): ?>
                     <div class="col-md-4">
                         <div class="card h-100">
                             <div class="card-body">
-                                <h6 class="card-title"><?php echo htmlspecialchars($p['titulo']); ?></h6>
-                                <p class="card-text text-muted small"><?php echo htmlspecialchars($p['descripcion']); ?></p>
-                                <p class="fw-bold text-success mb-1"><?php echo number_format($p['precio'], 2); ?> €</p>
-                                <span class="badge bg-secondary"><?php echo htmlspecialchars($p['estado_producto']); ?></span>
-                                <span class="badge bg-light text-dark">👁 <?php echo $p['visitas']; ?></span>
+                                <span class="badge bg-light text-dark mb-2"><?php echo htmlspecialchars($s['categoria']); ?></span>
+                                <h6 class="card-title"><?php echo htmlspecialchars($s['titulo']); ?></h6>
+                                <p class="card-text text-muted small"><?php echo htmlspecialchars($s['descripcion']); ?></p>
+                                <p class="fw-bold text-success mb-1">
+                                    <?php echo number_format($s['precio'], 2); ?> €
+                                    <small class="text-muted fw-normal">/ <?php echo $s['unidad_cobro']; ?></small>
+                                </p>
+                                <?php if ($s['valoracion_media'] > 0): ?>
+                                    <span class="estrellas small">
+                                        <?php echo str_repeat('★', round($s['valoracion_media'])) . str_repeat('☆', 5 - round($s['valoracion_media'])); ?>
+                                    </span>
+                                    <small class="text-muted"><?php echo number_format($s['valoracion_media'], 1); ?></small>
+                                <?php endif; ?>
                             </div>
                             <div class="card-footer d-flex gap-2">
-                                <a href="producto.php?id=<?php echo $p['id']; ?>" class="btn btn-outline-primary btn-sm flex-fill">Ver</a>
-                                <button class="btn btn-outline-secondary btn-sm flex-fill">Editar</button>
+                                <a href="servicio.php?id=<?php echo $s['id']; ?>" class="btn btn-outline-primary btn-sm flex-fill">Ver</a>
+                                <a href="editarServicio.php?id=<?php echo $s['id']; ?>" class="btn btn-outline-secondary btn-sm flex-fill">Editar</a>
                             </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
-    <!-- ── COMPRAS ── -->
-    <?php elseif ($tabActiva === 'compras'): ?>
-
-        <h5 class="mb-3">Mis compras</h5>
-
-        <?php if (empty($compras)): ?>
-            <div class="alert alert-secondary text-center">No has realizado ninguna compra todavía.</div>
+ 
+    <!-- ── SERVICIOS CONTRATADOS (como cliente) ── -->
+    <?php elseif ($tabActiva === 'contratados'): ?>
+ 
+        <h5 class="mb-3">Servicios que he contratado</h5>
+ 
+        <?php if (empty($contratosCliente)): ?>
+            <div class="alert alert-secondary text-center">No has contratado ningún servicio todavía.</div>
         <?php else: ?>
             <div class="d-flex flex-column gap-3">
-                <?php foreach ($compras as $c):
+                <?php foreach ($contratosCliente as $c):
                     $badge = match($c['estado']) {
                         'completado' => 'bg-success',
-                        'enviado'    => 'bg-primary',
+                        'en_proceso' => 'bg-primary',
                         'aceptado'   => 'bg-info text-dark',
                         'cancelado'  => 'bg-danger',
                         default      => 'bg-warning text-dark'
@@ -180,31 +202,74 @@
                             <div>
                                 <h6 class="mb-1"><?php echo htmlspecialchars($c['titulo']); ?></h6>
                                 <small class="text-muted">
-                                    Vendedor: <b><?php echo htmlspecialchars($c['vendedor']); ?></b>
-                                    · Pedido #<?php echo $c['id']; ?>
-                                    · <?php echo date('d/m/Y', strtotime($c['fecha_creacion'])); ?>
+                                    Prestador: <b><?php echo htmlspecialchars($c['prestador']); ?></b>
+                                    · Contrato #<?php echo $c['id']; ?>
+                                    · <?php echo date('d/m/Y', strtotime($c['fecha_contrato'])); ?>
                                 </small>
                                 <div class="mt-1">
-                                    <span class="badge <?php echo $badge; ?>"><?php echo ucfirst($c['estado']); ?></span>
+                                    <span class="badge <?php echo $badge; ?>"><?php echo ucfirst(str_replace('_', ' ', $c['estado'])); ?></span>
                                 </div>
                             </div>
                             <div class="text-end">
-                                <div class="fw-bold fs-5"><?php echo number_format($c['precio_final'], 2); ?> €</div>
-                                <a href="producto.php?id=<?php echo $c['producto_id']; ?>" class="btn btn-outline-primary btn-sm mt-1">Ver producto</a>
+                                <div class="fw-bold fs-5"><?php echo number_format($c['precio_acordado'], 2); ?> €</div>
+                                <small class="text-muted"><?php echo $c['unidad_cobro']; ?></small>
+                                <br>
+                                <a href="servicio.php?id=<?php echo $c['servicio_id']; ?>" class="btn btn-outline-primary btn-sm mt-1">Ver servicio</a>
                             </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
+ 
+    <!-- ── PEDIDOS RECIBIDOS (como prestador) ── -->
+    <?php elseif ($tabActiva === 'recibidos'): ?>
+ 
+        <h5 class="mb-3">Pedidos recibidos</h5>
+ 
+        <?php if (empty($contratosPrestador)): ?>
+            <div class="alert alert-secondary text-center">Aún no has recibido ningún pedido.</div>
+        <?php else: ?>
+            <div class="d-flex flex-column gap-3">
+                <?php foreach ($contratosPrestador as $c):
+                    $badge = match($c['estado']) {
+                        'completado' => 'bg-success',
+                        'en_proceso' => 'bg-primary',
+                        'aceptado'   => 'bg-info text-dark',
+                        'cancelado'  => 'bg-danger',
+                        default      => 'bg-warning text-dark'
+                    };
+                ?>
+                    <div class="card">
+                        <div class="card-body d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <h6 class="mb-1"><?php echo htmlspecialchars($c['titulo']); ?></h6>
+                                <small class="text-muted">
+                                    Cliente: <b><?php echo htmlspecialchars($c['cliente']); ?></b>
+                                    · Contrato #<?php echo $c['id']; ?>
+                                    · <?php echo date('d/m/Y', strtotime($c['fecha_contrato'])); ?>
+                                </small>
+                                <div class="mt-1">
+                                    <span class="badge <?php echo $badge; ?>"><?php echo ucfirst(str_replace('_', ' ', $c['estado'])); ?></span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold fs-5"><?php echo number_format($c['precio_acordado'], 2); ?> €</div>
+                                <small class="text-muted"><?php echo $c['unidad_cobro']; ?></small>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+ 
     <!-- ── FAVORITOS ── -->
     <?php elseif ($tabActiva === 'favoritos'): ?>
-
-        <h5 class="mb-3">Productos guardados</h5>
-
+ 
+        <h5 class="mb-3">Servicios guardados</h5>
+ 
         <?php if (empty($favoritos)): ?>
-            <div class="alert alert-secondary text-center">No tienes ningún producto guardado.</div>
+            <div class="alert alert-secondary text-center">No tienes ningún servicio guardado.</div>
         <?php else: ?>
             <div class="row g-3">
                 <?php foreach ($favoritos as $f): ?>
@@ -215,13 +280,16 @@
                             <?php endif; ?>
                             <div class="card-body">
                                 <h6 class="card-title"><?php echo htmlspecialchars($f['titulo']); ?></h6>
-                                <p class="fw-bold text-success mb-1"><?php echo number_format($f['precio'], 2); ?> €</p>
-                                <small class="text-muted">Vendedor: <?php echo htmlspecialchars($f['vendedor']); ?></small>
+                                <p class="fw-bold text-success mb-1">
+                                    <?php echo number_format($f['precio'], 2); ?> €
+                                    <small class="text-muted fw-normal">/ <?php echo $f['unidad_cobro']; ?></small>
+                                </p>
+                                <small class="text-muted">Prestador: <?php echo htmlspecialchars($f['prestador']); ?></small>
                             </div>
                             <div class="card-footer d-flex gap-2">
-                                <a href="producto.php?id=<?php echo $f['id']; ?>" class="btn btn-outline-primary btn-sm flex-fill">Ver</a>
+                                <a href="servicio.php?id=<?php echo $f['id']; ?>" class="btn btn-outline-primary btn-sm flex-fill">Ver</a>
                                 <form method="POST" action="perfil.php?accion=eliminarFavorito" class="flex-fill">
-                                    <input type="hidden" name="producto_id" value="<?php echo $f['id']; ?>">
+                                    <input type="hidden" name="servicio_id" value="<?php echo $f['id']; ?>">
                                     <button type="submit" class="btn btn-outline-danger btn-sm w-100">✕ Quitar</button>
                                 </form>
                             </div>
@@ -230,41 +298,47 @@
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
-    <!-- ── RESEÑAS ── -->
-    <?php elseif ($tabActiva === 'resenas'): ?>
-
-        <h5 class="mb-3">Reseñas recibidas</h5>
-
-        <?php if (empty($resenas)): ?>
-            <div class="alert alert-secondary text-center">Todavía no tienes reseñas.</div>
+ 
+    <!-- ── VALORACIONES ── -->
+    <?php elseif ($tabActiva === 'valoraciones'): ?>
+ 
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <h5 class="mb-0">Valoraciones recibidas</h5>
+            <?php if ($valoracionMedia['total'] > 0): ?>
+                <span class="estrellas fs-5"><?php echo str_repeat('★', round($valoracionMedia['media'])) . str_repeat('☆', 5 - round($valoracionMedia['media'])); ?></span>
+                <span class="text-muted"><?php echo number_format($valoracionMedia['media'], 1); ?> de media · <?php echo $valoracionMedia['total']; ?> valoracion<?php echo $valoracionMedia['total'] !== 1 ? 'es' : ''; ?></span>
+            <?php endif; ?>
+        </div>
+ 
+        <?php if (empty($valoraciones)): ?>
+            <div class="alert alert-secondary text-center">Todavía no tienes valoraciones.</div>
         <?php else: ?>
             <div class="d-flex flex-column gap-3">
-                <?php foreach ($resenas as $r): ?>
+                <?php foreach ($valoraciones as $v): ?>
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold"><?php echo htmlspecialchars($r['autor']); ?></span>
+                                <span class="fw-bold"><?php echo htmlspecialchars($v['autor']); ?></span>
                                 <div>
                                     <span class="estrellas">
-                                        <?php echo str_repeat('★', $r['puntuacion']) . str_repeat('☆', 5 - $r['puntuacion']); ?>
+                                        <?php echo str_repeat('★', $v['puntuacion']) . str_repeat('☆', 5 - $v['puntuacion']); ?>
                                     </span>
-                                    <small class="text-muted ms-2"><?php echo date('d/m/Y', strtotime($r['fecha'])); ?></small>
+                                    <small class="text-muted ms-2"><?php echo date('d/m/Y', strtotime($v['fecha'])); ?></small>
                                 </div>
                             </div>
-                            <p class="mb-1"><?php echo htmlspecialchars($r['comentario']); ?></p>
-                            <small class="text-muted">🏷️ <?php echo htmlspecialchars($r['producto']); ?></small>
+                            <p class="mb-1"><?php echo htmlspecialchars($v['comentario'] ?? ''); ?></p>
+                            <small class="text-muted">🛠️ <?php echo htmlspecialchars($v['servicio']); ?></small>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
+ 
     <!-- ── CONFIGURACIÓN ── -->
     <?php elseif ($tabActiva === 'configuracion'): ?>
-
+ 
         <h5 class="mb-3">Configuración de la cuenta</h5>
-
+ 
         <div class="card mb-3">
             <div class="card-header fw-bold">👤 Datos personales</div>
             <ul class="list-group list-group-flush">
@@ -280,9 +354,15 @@
                     <span>Ubicación</span>
                     <span class="text-muted"><?php echo htmlspecialchars($usuario['ubicacion'] ?? '—'); ?></span>
                 </li>
+                <?php if ($usuario['tiempo_respuesta']): ?>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Tiempo de respuesta medio</span>
+                    <span class="text-muted"><?php echo $usuario['tiempo_respuesta']; ?> h</span>
+                </li>
+                <?php endif; ?>
             </ul>
         </div>
-
+ 
         <div class="card border-danger">
             <div class="card-header text-danger fw-bold">⚠️ Zona de peligro</div>
             <div class="card-body">
@@ -290,11 +370,11 @@
                 <button class="btn btn-outline-danger btn-sm">Eliminar mi cuenta</button>
             </div>
         </div>
-
+ 
     <?php endif; ?>
-
+ 
 </div>
-
+ 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
