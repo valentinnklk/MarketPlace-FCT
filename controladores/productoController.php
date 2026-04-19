@@ -15,5 +15,14 @@ class ProductoController {
         $productos = new mostrarProducto($this->conexion);
         return $productos->mostrarProductoPorId($id);
     }
+    public function buscar($texto) {
+    $modelo = new mostrarProducto($this->conexion);
+    if ($texto !== '') {
+        return $modelo->buscarProductos($texto);
+    } else {
+        return $modelo->obtenerTodos();
+    }
+    }
+    
 }   
 ?>
