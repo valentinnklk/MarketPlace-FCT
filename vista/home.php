@@ -8,7 +8,7 @@ require_once "../controladores/usuarioController.php";
 require_once "../controladores/productoController.php";
 
 $productoController = new ProductoController($conexion);
-$productos = $productoController->mostrarProducto();
+$productos = $productoController->buscar($_GET['buscar'] ?? '');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -24,6 +24,11 @@ $productos = $productoController->mostrarProducto();
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
+
+        <form action="home.php" method="GET" class="d-flex mx-auto">
+            <input type="text" name="buscar" class="form-control form-control-sm me-2" placeholder="Buscar productos..." value="<?php echo htmlspecialchars($_GET['buscar'] ?? ''); ?>"style="width: 300px;">
+            <button type="submit" class="btn btn-outline-light btn-sm">🔍</button>
+        </form>
 
         <div class="d-flex gap-2 ms-auto">
             <a href="subirProducto.php" class="btn btn-success btn-sm">+ Vender</a>

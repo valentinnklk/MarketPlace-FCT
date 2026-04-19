@@ -7,7 +7,7 @@ class mostrarProducto{
     public function __construct($conexion) {
         $this->conexion = $conexion;
     }
-        public function mostrarProducto(){
+        public function obtenerTodos(){
 
     $sql = "SELECT 
         productos.vendedor_id,
@@ -58,4 +58,26 @@ class mostrarProducto{
         
         return $stmt->execute();
     }
+    public function buscarProductos(string $texto): array {
+    $sql = "SELECT 
+        productos.vendedor_id,
+        productos.id,
+        productos.titulo,
+        productos.descripcion,
+        productos.precio,
+        productos.estado_producto,
+        usuarios.nombre AS vendedor
+        FROM productos
+        INNER JOIN usuarios 
+        ON productos.vendedor_id = usuarios.id
+        WHERE productos.titulo LIKE :texto OR productos.descripcion LIKE :texto";
+
+    $stmt = $this->conexion->prepare($sql);
+    $busqueda = "%$texto%";
+    $stmt->bindParam(':texto', $busqueda);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+   
 }
