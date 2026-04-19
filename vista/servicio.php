@@ -1,10 +1,14 @@
 <?php
 require_once "../conexion.php";
 require_once "../controladores/servicioController.php";
-
+ 
+if (session_status() === PHP_SESSION_NONE) session_start();
+ 
 $servicioController = new ServicioController($conexion);
 $servicio = $servicioController->mostrarServicioPorId($_GET['id']);
-
+ 
+$usuario_logueado = $_SESSION['usuario_id'] ?? null;
+$es_propietario   = $usuario_logueado && $usuario_logueado == $servicio['prestador_id'];
 ?>
 <html lang="es">
 <head>
@@ -41,7 +45,7 @@ $servicio = $servicioController->mostrarServicioPorId($_GET['id']);
     </style>
 </head>
 <body class="bg-light">
-
+ 
 <div class="container py-5">
     <?php if ($servicio): ?>
         <div class="row justify-content-center">
@@ -57,13 +61,23 @@ $servicio = $servicioController->mostrarServicioPorId($_GET['id']);
                         <p class="precio mb-3">$<?php echo number_format($servicio['precio'], 2); ?></p>
                         <span class="badge bg-secondary badge-estado mb-3"><?php echo $servicio['activo'] ? 'Activo' : 'Inactivo'; ?></span>
                         <p class="text-muted small mb-4">Vendido por: <?php echo $servicio['prestador']; ?></p>
-
+ 
                         <!-- Botones de acción -->
                         <div class="d-flex gap-2 flex-wrap">
                             <a href="../index.php" class="btn btn-outline-primary btn-accion">Volver</a>
                             <button class="btn btn-success btn-accion">Agregar al Carrito</button>
                             <button class="btn btn-outline-warning btn-accion">Guardar en Favoritos</button>
                             <button class="btn btn-outline-danger btn-accion">Reportar Servicio</button>
+ 
+                            <?php if ($usuario_logueado && !$es_propietario): ?>
+                                <form method="POST" action="chat.php?accion=abrir" class="btn-accion">
+                                    <input type="hidden" name="prestador_id" value="<?= (int) $servicio['prestador_id'] ?>">
+                                    <input type="hidden" name="servicio_id"  value="<?= (int) $servicio['id'] ?>">
+                                    <button type="submit" class="btn btn-primary w-100">💬 Contactar</button>
+                                </form>
+                            <?php elseif (!$usuario_logueado): ?>
+                                <a href="loginVista.php" class="btn btn-outline-primary btn-accion">💬 Inicia sesión para contactar</a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -75,6 +89,7 @@ $servicio = $servicioController->mostrarServicioPorId($_GET['id']);
         </div>
     <?php endif; ?>
 </div>
-
+ 
 </body>
 </html>
+ 
