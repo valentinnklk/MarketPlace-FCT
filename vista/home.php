@@ -1,6 +1,6 @@
 <?php
 // vista/home.php
-
+session_start();
 require_once "../conexion.php";
 require_once "../controladores/usuarioController.php";
 require_once "../controladores/servicioController.php";
@@ -30,7 +30,11 @@ $servicios = $servicioController->buscar($_GET['buscar'] ?? '');
             <button type="submit" class="btn btn-outline-light btn-sm">🔍</button>
         </form>
             <a href="perfil.php"        class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
+            <?php if (isset($_SESSION['es_admin']) && $_SESSION['es_admin'] == 1): ?>
+            <a href="panelAdministracion.php" class="btn btn-warning btn-sm">🔧 Panel de administración</a>
+             <?php endif; ?>
         </div>
+        
     </div>
 </nav>
 
