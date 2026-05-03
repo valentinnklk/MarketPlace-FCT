@@ -1,5 +1,9 @@
 <?php
 // modelo/chatModelo.php
+//
+// Reescrito para coincidir con el esquema SQL real:
+//   - Tabla: `conversaciones` (en lugar de `chats`)
+//   - Relación en mensajes: `conversacion_id` (en lugar de `chat_id`)
 
 class ChatModelo {
 
@@ -10,14 +14,14 @@ class ChatModelo {
     }
 
     // ─────────────────────────────────────────────
-    // CONVERSACIONES
+    // CONVERSACIONES (entre cliente y prestador)
     // ─────────────────────────────────────────────
 
     /**
      * Busca una conversación existente entre cliente y prestador para un servicio.
      * Si no existe la crea y devuelve el id.
      */
-    public function obtenerOCrearConversacion(int $cliente_id, int $prestador_id, int $servicio_id): int {
+    public function obtenerOCrearChat(int $cliente_id, int $prestador_id, int $servicio_id): int {
         $stmt = $this->conn->prepare(
             "SELECT id FROM conversaciones
              WHERE cliente_id = ? AND prestador_id = ? AND servicio_id = ?
@@ -29,18 +33,18 @@ class ChatModelo {
         if ($fila) return (int) $fila['id'];
 
         $stmt = $this->conn->prepare(
-            "INSERT INTO conversaciones (cliente_id, prestador_id, servicio_id, fecha_inicio)
-             VALUES (?, ?, ?, NOW())"
+            "INSERT INTO conversaciones (cliente_id, prestador_id, servicio_id, fecha_inicio, total_mensajes)
+             VALUES (?, ?, ?, NOW(), 0)"
         );
         $stmt->execute([$cliente_id, $prestador_id, $servicio_id]);
         return (int) $this->conn->lastInsertId();
     }
 
     /**
-     * Devuelve todas las conversaciones del usuario (como cliente O prestador)
+     * Devuelve todas las conversaciones del usuario (como cliente O como prestador)
      * con los datos del otro participante y del servicio.
      */
-    public function getConversacionesPorUsuario(int $usuario_id): array {
+    public function getChatsPorUsuario(int $usuario_id): array {
         $stmt = $this->conn->prepare(
             "SELECT
                 c.id,
@@ -52,16 +56,17 @@ class ChatModelo {
                 CASE WHEN c.cliente_id = :uid1 THEN p.id         ELSE cl.id         END AS otro_id,
                 CASE WHEN c.cliente_id = :uid2 THEN p.nombre     ELSE cl.nombre     END AS otro_nombre,
                 CASE WHEN c.cliente_id = :uid3 THEN p.avatar_url ELSE cl.avatar_url END AS otro_avatar,
-                CASE WHEN c.cliente_id = :uid4
-                     THEN c.no_leidos_cliente
-                     ELSE c.no_leidos_prestador
-                END AS no_leidos
+                (SELECT COUNT(*) FROM mensajes m
+                    WHERE m.conversacion_id = c.id
+                      AND m.remitente_id != :uid4
+                      AND m.leido = 0
+                ) AS no_leidos
              FROM conversaciones c
              JOIN usuarios cl ON cl.id = c.cliente_id
              JOIN usuarios p  ON p.id  = c.prestador_id
              LEFT JOIN servicios s ON s.id = c.servicio_id
              WHERE c.cliente_id = :uid5 OR c.prestador_id = :uid6
-             ORDER BY c.fecha_ultimo_mensaje DESC"
+             ORDER BY COALESCE(c.fecha_ultimo_mensaje, c.fecha_inicio) DESC"
         );
         $stmt->execute([
             ':uid1' => $usuario_id, ':uid2' => $usuario_id,
@@ -72,9 +77,9 @@ class ChatModelo {
     }
 
     /**
-     * Devuelve una conversación verificando que el usuario sea participante.
+     * Devuelve una conversación verificando que el usuario es participante.
      */
-    public function getConversacionPorId(int $conv_id, int $usuario_id): array|false {
+    public function getChatPorId(int $chat_id, int $usuario_id): array|false {
         $stmt = $this->conn->prepare(
             "SELECT c.*,
                 cl.nombre     AS cliente_nombre,   cl.avatar_url AS cliente_avatar,
@@ -88,7 +93,7 @@ class ChatModelo {
                AND (c.cliente_id = ? OR c.prestador_id = ?)
              LIMIT 1"
         );
-        $stmt->execute([$conv_id, $usuario_id, $usuario_id]);
+        $stmt->execute([$chat_id, $usuario_id, $usuario_id]);
         return $stmt->fetch();
     }
 
@@ -98,9 +103,8 @@ class ChatModelo {
 
     /**
      * Devuelve los mensajes de una conversación.
-     * $desde_id > 0 solo trae los nuevos (polling AJAX).
      */
-    public function getMensajes(int $conv_id, int $desde_id = 0): array {
+    public function getMensajes(int $chat_id, int $desde_id = 0): array {
         $stmt = $this->conn->prepare(
             "SELECT m.id, m.remitente_id, m.contenido, m.leido, m.fecha_envio,
                     u.nombre AS remitente_nombre, u.avatar_url AS remitente_avatar
@@ -109,75 +113,67 @@ class ChatModelo {
              WHERE m.conversacion_id = ? AND m.id > ?
              ORDER BY m.fecha_envio ASC"
         );
-        $stmt->execute([$conv_id, $desde_id]);
+        $stmt->execute([$chat_id, $desde_id]);
         return $stmt->fetchAll();
     }
 
     /**
      * Inserta un mensaje y actualiza el resumen de la conversación.
      */
-    public function enviarMensaje(int $conv_id, int $remitente_id, string $contenido, array $conv): int {
-        $stmt = $this->conn->prepare(
-            "INSERT INTO mensajes (conversacion_id, remitente_id, contenido, leido, fecha_envio)
-             VALUES (?, ?, ?, 0, NOW())"
-        );
-        $stmt->execute([$conv_id, $remitente_id, $contenido]);
-        $mensaje_id = (int) $this->conn->lastInsertId();
+    public function enviarMensaje(int $chat_id, int $remitente_id, string $contenido): int {
+        $this->conn->beginTransaction();
+        try {
+            $stmt = $this->conn->prepare(
+                "INSERT INTO mensajes (conversacion_id, remitente_id, contenido, leido, fecha_envio)
+                 VALUES (?, ?, ?, 0, NOW())"
+            );
+            $stmt->execute([$chat_id, $remitente_id, $contenido]);
+            $mensaje_id = (int) $this->conn->lastInsertId();
 
-        // Incrementar no_leidos del destinatario
-        $es_cliente   = ($remitente_id === (int) $conv['cliente_id']);
-        $campo_leidos = $es_cliente ? 'no_leidos_prestador' : 'no_leidos_cliente';
+            // Actualizamos el resumen de la conversación
+            $resumen = mb_substr($contenido, 0, 120);
+            $stmt = $this->conn->prepare(
+                "UPDATE conversaciones
+                 SET ultimo_mensaje       = ?,
+                     fecha_ultimo_mensaje = NOW(),
+                     total_mensajes       = total_mensajes + 1
+                 WHERE id = ?"
+            );
+            $stmt->execute([$resumen, $chat_id]);
 
-        $resumen = mb_substr($contenido, 0, 80);
-        $stmt = $this->conn->prepare(
-            "UPDATE conversaciones
-             SET ultimo_mensaje       = ?,
-                 fecha_ultimo_mensaje = NOW(),
-                 total_mensajes       = total_mensajes + 1,
-                 $campo_leidos        = $campo_leidos + 1
-             WHERE id = ?"
-        );
-        $stmt->execute([$resumen, $conv_id]);
-
-        return $mensaje_id;
+            $this->conn->commit();
+            return $mensaje_id;
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            return 0;
+        }
     }
 
     /**
-     * Marca como leídos los mensajes recibidos y resetea el contador.
+     * Marca como leídos los mensajes recibidos en una conversación.
      */
-    public function marcarLeidos(int $conv_id, int $usuario_id, array $conv): void {
+    public function marcarLeidos(int $chat_id, int $usuario_id): void {
         $stmt = $this->conn->prepare(
             "UPDATE mensajes
              SET leido = 1
              WHERE conversacion_id = ? AND remitente_id != ? AND leido = 0"
         );
-        $stmt->execute([$conv_id, $usuario_id]);
-
-        $es_cliente   = ($usuario_id === (int) $conv['cliente_id']);
-        $campo_leidos = $es_cliente ? 'no_leidos_cliente' : 'no_leidos_prestador';
-
-        $stmt = $this->conn->prepare(
-            "UPDATE conversaciones SET $campo_leidos = 0 WHERE id = ?"
-        );
-        $stmt->execute([$conv_id]);
+        $stmt->execute([$chat_id, $usuario_id]);
     }
 
     /**
-     * Total de no leídos del usuario en todas sus conversaciones.
-     * Usa los contadores de la tabla (más rápido que COUNT en mensajes).
+     * Total de mensajes no leídos del usuario.
      */
     public function getTotalNoLeidos(int $usuario_id): int {
         $stmt = $this->conn->prepare(
-            "SELECT
-                SUM(CASE WHEN cliente_id   = :uid1 THEN no_leidos_cliente   ELSE 0 END) +
-                SUM(CASE WHEN prestador_id = :uid2 THEN no_leidos_prestador ELSE 0 END) AS total
-             FROM conversaciones
-             WHERE cliente_id = :uid3 OR prestador_id = :uid4"
+            "SELECT COUNT(*) AS total
+             FROM mensajes m
+             JOIN conversaciones c ON c.id = m.conversacion_id
+             WHERE m.leido = 0
+               AND m.remitente_id != ?
+               AND (c.cliente_id = ? OR c.prestador_id = ?)"
         );
-        $stmt->execute([
-            ':uid1' => $usuario_id, ':uid2' => $usuario_id,
-            ':uid3' => $usuario_id, ':uid4' => $usuario_id,
-        ]);
+        $stmt->execute([$usuario_id, $usuario_id, $usuario_id]);
         $res = $stmt->fetch();
         return (int) ($res['total'] ?? 0);
     }

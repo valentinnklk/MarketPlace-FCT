@@ -212,9 +212,18 @@
                             </div>
                             <div class="text-end">
                                 <div class="fw-bold fs-5"><?php echo number_format($c['precio_acordado'], 2); ?> €</div>
-                                <small class="text-muted"><?php echo $c['unidad_cobro']; ?></small>
+                                <small class="text-muted"><?php echo $c['unidad_precio']; ?></small>
                                 <br>
                                 <a href="servicio.php?id=<?php echo $c['servicio_id']; ?>" class="btn btn-outline-primary btn-sm mt-1">Ver servicio</a>
+
+                                <?php if ($c['estado'] === 'completado'): ?>
+                                    <?php if (!empty($c['reseña_id'])): ?>
+                                        <span class="badge bg-success mt-1 d-inline-block">✓ Valorado</span>
+                                    <?php else: ?>
+                                        <a href="reseñaVista.php?contrato_id=<?php echo (int) $c['id']; ?>"
+                                           class="btn btn-warning btn-sm mt-1">⭐ Valorar</a>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -282,7 +291,7 @@
                                 <h6 class="card-title"><?php echo htmlspecialchars($f['titulo']); ?></h6>
                                 <p class="fw-bold text-success mb-1">
                                     <?php echo number_format($f['precio'], 2); ?> €
-                                    <small class="text-muted fw-normal">/ <?php echo $f['unidad_cobro']; ?></small>
+                                    <small class="text-muted fw-normal">/ <?php echo $f['unidad_precio']; ?></small>
                                 </p>
                                 <small class="text-muted">Prestador: <?php echo htmlspecialchars($f['prestador']); ?></small>
                             </div>

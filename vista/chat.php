@@ -1,5 +1,7 @@
 <?php
 // vista/chat.php
+// Punto de entrada del chat. Enruta acciones AJAX y renderiza la interfaz.
+
 session_start();
 
 require_once __DIR__ . '/../conexion.php';
@@ -7,20 +9,21 @@ require_once __DIR__ . '/../controladores/chatControlador.php';
 
 $ctrl = new ChatControlador($conexion);
 
-// ── Enrutado de acciones AJAX ─────────────────────────
+// ── Enrutado de acciones ──────────────────────────────
 $accion = $_GET['accion'] ?? '';
 
+if ($accion === 'abrir'    && $_SERVER['REQUEST_METHOD'] === 'POST') { $ctrl->abrirChat(); }
 if ($accion === 'enviar'   && $_SERVER['REQUEST_METHOD'] === 'POST') { $ctrl->enviarMensaje(); }
 if ($accion === 'polling'  && $_SERVER['REQUEST_METHOD'] === 'GET')  { $ctrl->polling(); }
 if ($accion === 'noleidos' && $_SERVER['REQUEST_METHOD'] === 'GET')  { $ctrl->noLeidos(); }
 
-// ── Carga de datos (CORRECTO) ─────────────────────────
+// ── Carga de datos ────────────────────────────────────
 $data = $ctrl->mostrarChat();
 
-$conversaciones = $data['conversaciones'];
-$conv_activa    = $data['conv_activa'];
-$mensajes       = $data['mensajes'];
-$usuario_id     = $data['usuario_id'];
+$chats       = $data['chats'];
+$chat_activo = $data['chat_activo'];
+$mensajes    = $data['mensajes'];
+$usuario_id  = $data['usuario_id'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -34,7 +37,7 @@ $usuario_id     = $data['usuario_id'];
 
         .chat-wrapper {
             display: flex;
-            height: calc(100vh - 56px); /* resta la navbar */
+            height: calc(100vh - 56px);
             max-width: 1100px;
             margin: 0 auto;
             border-left: 1px solid #dee2e6;
@@ -42,13 +45,11 @@ $usuario_id     = $data['usuario_id'];
             background: #fff;
         }
 
-        /* ── Sidebar ── */
         .sidebar {
             width: 320px;
             min-width: 260px;
             border-right: 1px solid #dee2e6;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             flex-shrink: 0;
         }
         .sidebar-header {
@@ -59,18 +60,15 @@ $usuario_id     = $data['usuario_id'];
         }
         .sidebar-list { overflow-y: auto; flex: 1; }
 
-        .conv-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .chat-item {
+            display: flex; align-items: center; gap: 10px;
             padding: 12px 14px;
             cursor: pointer;
             border-bottom: 1px solid #f0f2f5;
-            text-decoration: none;
-            color: inherit;
+            text-decoration: none; color: inherit;
             transition: background .12s;
         }
-        .conv-item:hover, .conv-item.activa { background: #eef2ff; }
+        .chat-item:hover, .chat-item.activa { background: #eef2ff; }
 
         .avatar {
             width: 42px; height: 42px; border-radius: 50%;
@@ -81,9 +79,9 @@ $usuario_id     = $data['usuario_id'];
         }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .conv-info { flex: 1; overflow: hidden; }
-        .conv-nombre { font-weight: 600; font-size: .88rem; }
-        .conv-ultimo {
+        .chat-info { flex: 1; overflow: hidden; }
+        .chat-nombre { font-weight: 600; font-size: .88rem; }
+        .chat-ultimo {
             font-size: .75rem; color: #6b7280;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
@@ -94,7 +92,6 @@ $usuario_id     = $data['usuario_id'];
             padding: 2px 6px; font-weight: 700; flex-shrink: 0;
         }
 
-        /* ── Área principal ── */
         .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
         .chat-cabecera {
@@ -133,7 +130,6 @@ $usuario_id     = $data['usuario_id'];
         }
         .sin-seleccion svg { width: 56px; }
 
-        /* ── Footer input ── */
         .chat-footer {
             padding: 12px 16px;
             border-top: 1px solid #dee2e6;
@@ -157,10 +153,9 @@ $usuario_id     = $data['usuario_id'];
         .btn-send:hover    { background: #4338ca; }
         .btn-send:disabled { background: #9ca3af; cursor: not-allowed; }
 
-        /* Responsive: en móvil se oculta el sidebar si hay conv abierta */
         @media (max-width: 640px) {
-            .sidebar  { display: <?= $conv_activa ? 'none' : 'flex' ?>; width: 100%; }
-            .chat-main { display: <?= $conv_activa ? 'flex' : 'none' ?>; }
+            .sidebar   { display: <?= $chat_activo ? 'none' : 'flex' ?>; width: 100%; }
+            .chat-main { display: <?= $chat_activo ? 'flex' : 'none' ?>; }
         }
     </style>
 </head>
@@ -187,34 +182,34 @@ $usuario_id     = $data['usuario_id'];
     <aside class="sidebar">
         <div class="sidebar-header">💬 Mensajes</div>
         <div class="sidebar-list">
-            <?php if (empty($conversaciones)): ?>
+            <?php if (empty($chats)): ?>
                 <p class="text-muted text-center p-4 small">
                     Aún no tienes conversaciones.<br>
                     Contacta con un prestador desde su servicio.
                 </p>
             <?php else: ?>
-                <?php foreach ($conversaciones as $c):
-                    $activa  = ($conv_activa && $conv_activa['id'] == $c['id']) ? 'activa' : '';
+                <?php foreach ($chats as $c):
+                    $activa  = ($chat_activo && $chat_activo['id'] == $c['id']) ? 'activa' : '';
                     $inicial = mb_strtoupper(mb_substr($c['otro_nombre'], 0, 1));
                 ?>
-                    <a href="chat.php?conv_id=<?= $c['id'] ?>" class="conv-item <?= $activa ?>">
+                    <a href="chat.php?chat_id=<?= (int) $c['id'] ?>" class="chat-item <?= $activa ?>">
                         <div class="avatar">
-                            <?php if ($c['otro_avatar']): ?>
+                            <?php if (!empty($c['otro_avatar'])): ?>
                                 <img src="<?= htmlspecialchars($c['otro_avatar']) ?>" alt="">
                             <?php else: ?>
                                 <?= $inicial ?>
                             <?php endif; ?>
                         </div>
-                        <div class="conv-info">
-                            <div class="conv-nombre"><?= htmlspecialchars($c['otro_nombre']) ?></div>
-                            <div class="conv-ultimo">
-                                <?= $c['ultimo_mensaje']
+                        <div class="chat-info">
+                            <div class="chat-nombre"><?= htmlspecialchars($c['otro_nombre']) ?></div>
+                            <div class="chat-ultimo">
+                                <?= !empty($c['ultimo_mensaje'])
                                     ? htmlspecialchars($c['ultimo_mensaje'])
                                     : '<em>Sin mensajes aún</em>' ?>
                             </div>
                         </div>
-                        <?php if ($c['no_leidos'] > 0): ?>
-                            <span class="badge-unread"><?= $c['no_leidos'] ?></span>
+                        <?php if ((int) $c['no_leidos'] > 0): ?>
+                            <span class="badge-unread"><?= (int) $c['no_leidos'] ?></span>
                         <?php endif; ?>
                     </a>
                 <?php endforeach; ?>
@@ -224,12 +219,12 @@ $usuario_id     = $data['usuario_id'];
 
     <!-- ── ÁREA PRINCIPAL ── -->
     <main class="chat-main">
-        <?php if ($conv_activa): ?>
+        <?php if ($chat_activo): ?>
 
             <?php
-                $es_cliente   = ($conv_activa['cliente_id'] == $usuario_id);
-                $otro_nombre  = $es_cliente ? $conv_activa['prestador_nombre'] : $conv_activa['cliente_nombre'];
-                $otro_avatar  = $es_cliente ? $conv_activa['prestador_avatar'] : $conv_activa['cliente_avatar'];
+                $es_cliente   = ($chat_activo['cliente_id'] == $usuario_id);
+                $otro_nombre  = $es_cliente ? $chat_activo['prestador_nombre'] : $chat_activo['cliente_nombre'];
+                $otro_avatar  = $es_cliente ? $chat_activo['prestador_avatar'] : $chat_activo['cliente_avatar'];
                 $inicial_otro = mb_strtoupper(mb_substr($otro_nombre, 0, 1));
             ?>
 
@@ -244,8 +239,8 @@ $usuario_id     = $data['usuario_id'];
                 </div>
                 <div>
                     <h6><?= htmlspecialchars($otro_nombre) ?></h6>
-                    <?php if ($conv_activa['servicio_titulo']): ?>
-                        <small>Servicio: <?= htmlspecialchars($conv_activa['servicio_titulo']) ?></small>
+                    <?php if (!empty($chat_activo['servicio_titulo'])): ?>
+                        <small>Servicio: <?= htmlspecialchars($chat_activo['servicio_titulo']) ?></small>
                     <?php endif; ?>
                 </div>
             </div>
@@ -255,7 +250,7 @@ $usuario_id     = $data['usuario_id'];
                 <?php foreach ($mensajes as $msg):
                     $clase = ($msg['remitente_id'] == $usuario_id) ? 'mia' : 'suya';
                 ?>
-                    <div class="burbuja-wrap <?= $clase ?>" data-id="<?= $msg['id'] ?>">
+                    <div class="burbuja-wrap <?= $clase ?>" data-id="<?= (int) $msg['id'] ?>">
                         <div class="burbuja <?= $clase ?>"><?= nl2br(htmlspecialchars($msg['contenido'])) ?></div>
                         <div class="burbuja-meta">
                             <?= $clase === 'mia' ? 'Tú' : htmlspecialchars($msg['remitente_nombre']) ?>
@@ -272,9 +267,9 @@ $usuario_id     = $data['usuario_id'];
             </div>
 
             <script>
-            const CONV_ID    = <?= (int) $conv_activa['id'] ?>;
+            const CHAT_ID    = <?= (int) $chat_activo['id'] ?>;
             const USUARIO_ID = <?= (int) $usuario_id ?>;
-            let ultimoId     = <?= !empty($mensajes) ? (int) end($mensajes)['id'] : 0 ?>;
+            let   ultimoId   = <?= !empty($mensajes) ? (int) end($mensajes)['id'] : 0 ?>;
 
             const area = document.getElementById('mensajes-area');
             const txt  = document.getElementById('txt');
@@ -297,7 +292,7 @@ $usuario_id     = $data['usuario_id'];
                 btn.disabled = true;
 
                 const fd = new FormData();
-                fd.append('conv_id',   CONV_ID);
+                fd.append('chat_id',   CHAT_ID);
                 fd.append('contenido', contenido);
 
                 try {
@@ -310,7 +305,7 @@ $usuario_id     = $data['usuario_id'];
                                          contenido, fecha_envio: new Date().toISOString() });
                         ultimoId = data.mensaje_id;
                     }
-                } catch(e) {
+                } catch (e) {
                     alert('Error al enviar. Inténtalo de nuevo.');
                 } finally {
                     btn.disabled = false;
@@ -325,7 +320,6 @@ $usuario_id     = $data['usuario_id'];
                 const texto  = esc(msg.contenido).replace(/\n/g, '<br>');
                 const nombre = esMia ? 'Tú' : esc(msg.remitente_nombre ?? '');
 
-                // Evitar duplicado si el polling llega antes
                 if (document.querySelector(`[data-id="${msg.id}"]`)) return;
 
                 const div = document.createElement('div');
@@ -344,7 +338,7 @@ $usuario_id     = $data['usuario_id'];
             // ── Polling cada 3 s ──────────────────────────────────────────
             setInterval(async () => {
                 try {
-                    const res  = await fetch(`chat.php?accion=polling&conv_id=${CONV_ID}&desde_id=${ultimoId}`);
+                    const res  = await fetch(`chat.php?accion=polling&chat_id=${CHAT_ID}&desde_id=${ultimoId}`);
                     const data = await res.json();
                     if (data.ok && data.mensajes.length) {
                         data.mensajes.forEach(m => {
@@ -352,7 +346,7 @@ $usuario_id     = $data['usuario_id'];
                             ultimoId = Math.max(ultimoId, m.id);
                         });
                     }
-                } catch(e) { /* silencioso */ }
+                } catch (e) { /* silencioso */ }
             }, 3000);
             </script>
 
@@ -367,16 +361,16 @@ $usuario_id     = $data['usuario_id'];
     </main>
 </div>
 
-<!-- ── Badge navbar no leídos ─────────────────────────────────────────────── -->
+<!-- Badge navbar no leídos -->
 <script>
 (async function actualizarBadge() {
     try {
-        const res  = await fetch('chat.php?accion=noleidos');
-        const data = await res.json();
+        const res   = await fetch('chat.php?accion=noleidos');
+        const data  = await res.json();
         const badge = document.getElementById('badge-navbar');
         if (data.total > 0) { badge.textContent = data.total; badge.style.display = ''; }
         else                 { badge.style.display = 'none'; }
-    } catch(e) {}
+    } catch (e) {}
     setTimeout(actualizarBadge, 5000);
 })();
 </script>

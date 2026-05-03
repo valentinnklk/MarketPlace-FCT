@@ -1,13 +1,18 @@
 <?php
 // vista/home.php
-session_start();
+require_once "../controladores/proteger.php";
 require_once "../conexion.php";
 require_once "../controladores/usuarioController.php";
 require_once "../controladores/servicioController.php";
+require_once "../modelo/chatModelo.php"; // Necesario para el contador de mensajes
 
 $servicioController = new ServicioController($conexion);
 $servicios = $servicioController->buscar($_GET['buscar'] ?? '');
 
+// Lógica para el contador de mensajes no leídos
+$chatModelo = new ChatModelo($conexion);
+$usuario_id = $_SESSION['usuario_id'] ?? null;
+$no_leidos = ($usuario_id) ? $chatModelo->getTotalNoLeidos($usuario_id) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,6 +20,14 @@ $servicios = $servicioController->buscar($_GET['buscar'] ?? '');
     <meta charset="UTF-8">
     <title>Marketplace – Inicio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .badge-notify {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.7rem;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
@@ -23,24 +36,29 @@ $servicios = $servicioController->buscar($_GET['buscar'] ?? '');
     <div class="container">
         <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
 
-        <div class="d-flex gap-2 ms-auto">
+        <div class="d-flex gap-2 ms-auto align-items-center">
             <a href="subirServicio.php" class="btn btn-success btn-sm">+ Ofrecer servicio</a>
-            <form action="home.php" method="GET" class="d-flex mx-auto">
-            <input type="text" name="buscar" class="form-control form-control-sm me-2" placeholder="Buscar productos..." value="<?php echo htmlspecialchars($_GET['buscar'] ?? ''); ?>"style="width: 300px;">
-            <button type="submit" class="btn btn-outline-light btn-sm">🔍</button>
-        </form>
-        
-            <a href="perfil.php"        class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
-            <?php if (isset($_SESSION['es_admin']) && $_SESSION['es_admin'] == 1): ?>
-            <a href="panelAdministracion.php" class="btn btn-warning btn-sm">🔧 Panel de administración</a>
-             <?php endif; ?>
+            
+            <form action="home.php" method="GET" class="d-flex mx-2">
+                <input type="text" name="buscar" class="form-control form-control-sm me-2" placeholder="Buscar productos..." value="<?php echo htmlspecialchars($_GET['buscar'] ?? ''); ?>" style="width: 250px;">
+                <button type="submit" class="btn btn-outline-light btn-sm">🔍</button>
+            </form>
+
+            <a href="chat.php" class="btn btn-outline-light btn-sm position-relative">
+                💬 Mensajes
+                <?php if ($no_leidos > 0): ?>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <?php echo $no_leidos; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
+
+            <a href="perfil.php" class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
         </div>
-        
     </div>
 </nav>
 
 <div class="container mt-5">
-
     <h1 class="text-center mb-4">Servicios disponibles</h1>
 
     <div class="row">
@@ -82,7 +100,10 @@ $servicios = $servicioController->buscar($_GET['buscar'] ?? '');
     </div>
 </div>
 
-<a href="../controladores/logout.php">Cerrar sesión</a>
+<div class="container text-center py-4">
+    <a href="../controladores/logout.php" class="btn btn-link text-danger">Cerrar sesión</a>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
