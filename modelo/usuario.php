@@ -21,5 +21,23 @@ class Usuario {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function obtenerPorId($id) {
+    $sql = "SELECT id, nombre, email, ubicacion, avatar_url, es_administrador, fecha_registro, tiempo_respuesta
+            FROM usuarios WHERE id = :id";
+    $stmt = $this->conexion->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+public function obtenerServiciosPorUsuario($id) {
+    $sql = "SELECT s.id, s.titulo, s.descripcion, s.precio, s.unidad_cobro
+            FROM servicios s
+            WHERE s.prestador_id = :id AND s.activo = 1";
+    $stmt = $this->conexion->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }
 ?>

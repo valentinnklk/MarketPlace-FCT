@@ -11,6 +11,15 @@ class UsuarioController {
         $usuario = new Usuario($this->conexion);
         return $usuario->mostrarUsuario();
     }
+    public function obtenerPorId($id) {
+    $usuario = new Usuario($this->conexion);
+    return $usuario->obtenerPorId($id);
+}
+
+public function obtenerServiciosPorUsuario($id) {
+    $usuario = new Usuario($this->conexion);
+    return $usuario->obtenerServiciosPorUsuario($id);
+}
 
 }
 ?>

@@ -37,4 +37,16 @@ function obtenerReportesUsuarios() {
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+function insertarReporte($reportador_id, $tipo, $servicio_id, $usuario_reportado_id, $motivo) {
+    global $conexion;
+    $sql = "INSERT INTO reportes (reportador_id, tipo, servicio_id, usuario_reportado_id, motivo, estado, fecha_creacion)
+            VALUES (:reportador_id, :tipo, :servicio_id, :usuario_reportado_id, :motivo, 'pendiente', NOW())";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(':reportador_id', $reportador_id);
+    $stmt->bindParam(':tipo', $tipo);
+    $stmt->bindParam(':servicio_id', $servicio_id);
+    $stmt->bindParam(':usuario_reportado_id', $usuario_reportado_id);
+    $stmt->bindParam(':motivo', $motivo);
+    return $stmt->execute();
+}
 ?>

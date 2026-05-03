@@ -67,7 +67,12 @@ $es_propietario   = $usuario_logueado && $usuario_logueado == $servicio['prestad
                             <a href="../index.php" class="btn btn-outline-primary btn-accion">Volver</a>
                             <button class="btn btn-success btn-accion">Agregar al Carrito</button>
                             <button class="btn btn-outline-warning btn-accion">Guardar en Favoritos</button>
-                            <button class="btn btn-outline-danger btn-accion">Reportar Servicio</button>
+                            <!-- Botón reportar -->
+                            <?php if ($usuario_logueado && !$es_propietario): ?>
+                                <button class="btn btn-outline-danger btn-accion" data-bs-toggle="modal" data-bs-target="#modalReporte">
+                                    🚩 Reportar Servicio
+                                </button>
+                            <?php endif; ?>
  
                             <?php if ($usuario_logueado && !$es_propietario): ?>
                                 <form method="POST" action="chat.php?accion=abrir" class="btn-accion">
@@ -89,7 +94,49 @@ $es_propietario   = $usuario_logueado && $usuario_logueado == $servicio['prestad
         </div>
     <?php endif; ?>
 </div>
- 
+ <!-- Modal de reporte -->
+<?php if ($usuario_logueado && !$es_propietario): ?>
+<div class="modal fade" id="modalReporte" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">🚩 Reportar servicio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="../CONTROLADORES/reportarController.php" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="tipo" value="servicio">
+                    <input type="hidden" name="servicio_id" value="<?php echo $servicio['id']; ?>">
+                    <input type="hidden" name="usuario_reportado_id" value="">
+                    <input type="hidden" name="redirect" value="../VISTA/servicio.php?id=<?php echo $servicio['id']; ?>">
+
+                    <?php if (isset($_GET['reporte'])): ?>
+                        <div class="alert <?php echo $_GET['reporte'] === 'ok' ? 'alert-success' : 'alert-danger'; ?>">
+                            <?php echo $_GET['reporte'] === 'ok' ? '✅ Reporte enviado correctamente.' : '❌ El motivo no puede estar vacío.'; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <label class="form-label">Motivo del reporte</label>
+                    <select name="motivo" class="form-select mb-3" required>
+                        <option value="">-- Selecciona un motivo --</option>
+                        <option value="Precio abusivo">Precio abusivo</option>
+                        <option value="Contenido inapropiado">Contenido inapropiado</option>
+                        <option value="Servicio fraudulento">Servicio fraudulento</option>
+                        <option value="Información falsa">Información falsa</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Enviar reporte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
  
