@@ -1,21 +1,32 @@
 <?php
 require_once "../conexion.php";
 require_once "../controladores/servicioController.php";
- 
+
 if (session_status() === PHP_SESSION_NONE) session_start();
- 
+
 $servicioController = new ServicioController($conexion);
-$servicio = $servicioController->mostrarServicioPorId($_GET['id']);
- 
+$servicio = $servicioController->mostrarServicioPorId($_GET['id'] ?? 0);
+
 $usuario_logueado = $_SESSION['usuario_id'] ?? null;
-$es_propietario   = $usuario_logueado && $usuario_logueado == $servicio['prestador_id'];
+$es_propietario   = $servicio && $usuario_logueado && $usuario_logueado == $servicio['prestador_id'];
+
+// Comprobar si el servicio ya está en favoritos del usuario
+$es_favorito = false;
+if ($usuario_logueado && $servicio) {
+    $stmtFav = $conexion->prepare(
+        "SELECT 1 FROM favoritos WHERE usuario_id = ? AND servicio_id = ? LIMIT 1"
+    );
+    $stmtFav->execute([(int)$usuario_logueado, (int)$servicio['id']]);
+    $es_favorito = (bool) $stmtFav->fetchColumn();
+}
 ?>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Detalle del Servicio</title>
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <style>
         .servicio-card {
             border-radius: 15px;
@@ -23,79 +34,248 @@ $es_propietario   = $usuario_logueado && $usuario_logueado == $servicio['prestad
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             transition: transform 0.3s;
         }
-        .servicio-card:hover {
-            transform: translateY(-5px);
+        .servicio-card:hover { transform: translateY(-5px); }
+        .servicio-imagen { object-fit: cover; height: 300px; width: 100%; }
+        .precio { font-size: 1.8rem; font-weight: bold; color: #28a745; }
+        .badge-estado { font-size: 0.9rem; }
+        .btn-accion { flex: 1; }
+
+        /* Pasos del modal de reserva */
+        .paso-reserva { display: none; }
+        .paso-reserva.activo { display: block; }
+        .paso-indicador {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
-        .servicio-imagen {
-            object-fit: cover;
-            height: 300px;
-            width: 100%;
+        .paso-indicador .punto {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: #e9ecef; color: #6c757d;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 0.9rem;
         }
-        .precio {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #28a745;
+        .paso-indicador .punto.activo { background: #0d6efd; color: #fff; }
+        .paso-indicador .punto.completado { background: #28a745; color: #fff; }
+
+        .resumen-fila {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
         }
-        .badge-estado {
-            font-size: 0.9rem;
-        }
-        .btn-accion {
-            flex: 1;
-        }
+        .resumen-fila:last-child { border-bottom: none; }
+        .resumen-fila .clave { font-weight: 600; color: #495057; }
     </style>
 </head>
 <body class="bg-light">
- 
-<div class="container py-5">
+
+<div class="container py-5" style="max-width: 900px;">
+
     <?php if ($servicio): ?>
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card servicio-card">
-                    <!-- Imagen del servicio -->
-                    <img src="<?php echo $servicio['imagen'] ?? 'https://via.placeholder.com/800x300.png?text=Servicio'; ?>" 
-                         alt="<?php echo $servicio['titulo']; ?>" class="servicio-imagen">
-                    
-                    <div class="card-body p-4">
-                        <h2 class="card-title mb-3"><?php echo $servicio['titulo']; ?></h2>
-                        <p class="card-text text-muted mb-3"><?php echo $servicio['descripcion']; ?></p>
-                        <p class="precio mb-3">$<?php echo number_format($servicio['precio'], 2); ?></p>
-                        <span class="badge bg-secondary badge-estado mb-3"><?php echo $servicio['activo'] ? 'Activo' : 'Inactivo'; ?></span>
-                        <p class="text-muted small mb-4">Vendido por: <?php echo $servicio['prestador']; ?></p>
- 
-                        <!-- Botones de acción -->
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a href="../index.php" class="btn btn-outline-primary btn-accion">Volver</a>
-                            <button class="btn btn-success btn-accion">Agregar al Carrito</button>
-                            <button class="btn btn-outline-warning btn-accion">Guardar en Favoritos</button>
-                            <!-- Botón reportar -->
-                            <?php if ($usuario_logueado && !$es_propietario): ?>
-                                <button class="btn btn-outline-danger btn-accion" data-bs-toggle="modal" data-bs-target="#modalReporte">
-                                    🚩 Reportar Servicio
-                                </button>
-                            <?php endif; ?>
- 
-                            <?php if ($usuario_logueado && !$es_propietario): ?>
-                                <form method="POST" action="chat.php?accion=abrir" class="btn-accion">
-                                    <input type="hidden" name="prestador_id" value="<?= (int) $servicio['prestador_id'] ?>">
-                                    <input type="hidden" name="servicio_id"  value="<?= (int) $servicio['id'] ?>">
-                                    <button type="submit" class="btn btn-primary w-100">💬 Contactar</button>
-                                </form>
-                            <?php elseif (!$usuario_logueado): ?>
-                                <a href="loginVista.php" class="btn btn-outline-primary btn-accion">💬 Inicia sesión para contactar</a>
-                            <?php endif; ?>
+
+        <!-- Botón Volver fuera del card, encima -->
+        <div class="mb-3">
+            <a href="home.php" class="btn btn-outline-secondary btn-sm">← Volver</a>
+        </div>
+
+        <!-- Mensaje flash de favorito -->
+        <?php if (isset($_GET['favorito'])): ?>
+            <?php if ($_GET['favorito'] === 'agregar'): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ❤️ Servicio añadido a tus favoritos.
+                    <a href="../vista/perfil.php?tab=favoritos" class="alert-link ms-1">Ver favoritos →</a>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php elseif ($_GET['favorito'] === 'quitar'): ?>
+                <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+                    🤍 Servicio eliminado de tus favoritos.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <!-- Mensaje flash de reserva -->
+        <?php if (isset($_GET['reserva'])): ?>
+            <?php if ($_GET['reserva'] === 'ok'): ?>
+                <div class="alert alert-success">
+                    ✅ Solicitud de reserva enviada correctamente. El prestador recibirá una notificación.
+                </div>
+            <?php elseif ($_GET['reserva'] === 'error'): ?>
+                <div class="alert alert-danger">
+                    ❌ <?php echo htmlspecialchars(urldecode($_GET['msg'] ?? 'No se pudo procesar la reserva.')); ?>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <div class="card servicio-card">
+            <img src="<?php echo htmlspecialchars($servicio['imagen'] ?? 'https://via.placeholder.com/800x300.png?text=Servicio'); ?>"
+                 alt="<?php echo htmlspecialchars($servicio['titulo']); ?>" class="servicio-imagen">
+
+            <div class="card-body p-4">
+                <h2 class="card-title mb-3"><?php echo htmlspecialchars($servicio['titulo']); ?></h2>
+                <p class="card-text text-muted mb-3"><?php echo nl2br(htmlspecialchars($servicio['descripcion'])); ?></p>
+                <p class="precio mb-3">
+                    <?php echo number_format($servicio['precio'], 2); ?> €
+                    <small class="text-muted fw-normal" style="font-size: 1rem;">
+                        / <?php echo htmlspecialchars($servicio['unidad_cobro']); ?>
+                    </small>
+                </p>
+                <span class="badge bg-secondary badge-estado mb-3">
+                    <?php echo $servicio['activo'] ? 'Activo' : 'Inactivo'; ?>
+                </span>
+                <p class="text-muted small mb-4">
+                    Prestador:
+                    <a href="verUsuarios.php?id=<?php echo (int) $servicio['prestador_id']; ?>">
+                        <?php echo htmlspecialchars($servicio['prestador']); ?>
+                    </a>
+                </p>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <?php if (!$usuario_logueado): ?>
+                        <a href="loginVista.php" class="btn btn-primary btn-accion">
+                            🔒 Inicia sesión para reservar
+                        </a>
+                        <a href="loginVista.php" class="btn btn-outline-secondary btn-accion">
+                            🤍 Guardar en favoritos
+                        </a>
+                    <?php elseif (!$es_propietario && $servicio['activo']): ?>
+                        <button type="button" class="btn btn-primary btn-accion"
+                                data-bs-toggle="modal" data-bs-target="#modalReserva">
+                            📅 Reservar servicio
+                        </button>
+
+                        <!-- Botón Favoritos -->
+                        <form method="POST" action="../controladores/favoritosController.php" class="btn-accion">
+                            <input type="hidden" name="servicio_id" value="<?php echo (int) $servicio['id']; ?>">
+                            <input type="hidden" name="accion" value="<?php echo $es_favorito ? 'quitar' : 'agregar'; ?>">
+                            <button type="submit"
+                                    class="btn w-100 <?php echo $es_favorito ? 'btn-danger' : 'btn-outline-danger'; ?>"
+                                    title="<?php echo $es_favorito ? 'Quitar de favoritos' : 'Guardar en favoritos'; ?>">
+                                <?php echo $es_favorito ? '❤️ En favoritos' : '🤍 Guardar'; ?>
+                            </button>
+                        </form>
+
+                        <button type="button" class="btn btn-outline-danger btn-accion"
+                                data-bs-toggle="modal" data-bs-target="#modalReporte">
+                            🚩 Reportar servicio
+                        </button>
+                    <?php elseif ($es_propietario): ?>
+                        <div class="alert alert-info mb-0 w-100">
+                            ℹ️ Este es uno de tus servicios publicados.
                         </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
+
     <?php else: ?>
         <div class="alert alert-warning text-center" role="alert">
             Servicio no encontrado.
         </div>
     <?php endif; ?>
 </div>
- <!-- Modal de reporte -->
-<?php if ($usuario_logueado && !$es_propietario): ?>
+
+<!-- ============================================================ -->
+<!-- MODAL DE RESERVA (3 PASOS)                                   -->
+<!-- ============================================================ -->
+<?php if ($servicio && $usuario_logueado && !$es_propietario && $servicio['activo']): ?>
+<div class="modal fade" id="modalReserva" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">📅 Reservar servicio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="formReserva" method="POST" action="../controladores/reservar_servicio.php">
+                <input type="hidden" name="servicio_id" value="<?php echo (int) $servicio['id']; ?>">
+                <input type="hidden" name="fecha_servicio" id="reservaFechaServicio" value="">
+
+                <div class="modal-body">
+                    <!-- Indicador de pasos -->
+                    <div class="paso-indicador">
+                        <div class="punto activo" id="puntoPaso1">1</div>
+                        <div class="punto"        id="puntoPaso2">2</div>
+                        <div class="punto"        id="puntoPaso3">3</div>
+                    </div>
+
+                    <!-- Paso 1: Fecha -->
+                    <div class="paso-reserva activo" id="paso1">
+                        <h6 class="mb-3">1️⃣ Selecciona una fecha</h6>
+                        <p class="text-muted small">
+                            Solo se pueden reservar fechas a partir de mañana.
+                        </p>
+                        <input type="text" id="reservaFecha" class="form-control"
+                               placeholder="Selecciona una fecha..." required readonly>
+                    </div>
+
+                    <!-- Paso 2: Hora -->
+                    <div class="paso-reserva" id="paso2">
+                        <h6 class="mb-3">2️⃣ Selecciona una hora</h6>
+                        <p class="text-muted small">
+                            Horario disponible: de 08:00 a 20:00.
+                        </p>
+                        <select id="reservaHora" class="form-select" required>
+                            <option value="">-- Selecciona una hora --</option>
+                            <?php for ($h = 8; $h <= 20; $h++): ?>
+                                <?php $hh = sprintf('%02d:00', $h); ?>
+                                <option value="<?php echo $hh; ?>"><?php echo $hh; ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+
+                    <!-- Paso 3: Resumen -->
+                    <div class="paso-reserva" id="paso3">
+                        <h6 class="mb-3">3️⃣ Confirma tu reserva</h6>
+                        <div class="border rounded p-3 bg-light">
+                            <div class="resumen-fila">
+                                <span class="clave">Servicio</span>
+                                <span><?php echo htmlspecialchars($servicio['titulo']); ?></span>
+                            </div>
+                            <div class="resumen-fila">
+                                <span class="clave">Precio</span>
+                                <span>
+                                    <?php echo number_format($servicio['precio'], 2); ?> €
+                                    / <?php echo htmlspecialchars($servicio['unidad_cobro']); ?>
+                                </span>
+                            </div>
+                            <div class="resumen-fila">
+                                <span class="clave">Fecha</span>
+                                <span id="resumenFecha">—</span>
+                            </div>
+                            <div class="resumen-fila">
+                                <span class="clave">Hora</span>
+                                <span id="resumenHora">—</span>
+                            </div>
+                        </div>
+                        <p class="text-muted small mt-3 mb-0">
+                            La solicitud quedará pendiente hasta que el prestador la acepte.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" id="btnReservaAtras" disabled>
+                        ← Atrás
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnReservaSiguiente" disabled>
+                        Siguiente →
+                    </button>
+                    <button type="submit" class="btn btn-success d-none" id="btnReservaConfirmar">
+                        ✅ Confirmar reserva
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- ============================================================ -->
+<!-- MODAL DE REPORTE                                             -->
+<!-- ============================================================ -->
+<?php if ($servicio && $usuario_logueado && !$es_propietario): ?>
 <div class="modal fade" id="modalReporte" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -103,12 +283,12 @@ $es_propietario   = $usuario_logueado && $usuario_logueado == $servicio['prestad
                 <h5 class="modal-title">🚩 Reportar servicio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="../CONTROLADORES/reportarController.php" method="POST">
+            <form action="../controladores/reportarController.php" method="POST">
                 <div class="modal-body">
                     <input type="hidden" name="tipo" value="servicio">
-                    <input type="hidden" name="servicio_id" value="<?php echo $servicio['id']; ?>">
+                    <input type="hidden" name="servicio_id" value="<?php echo (int) $servicio['id']; ?>">
                     <input type="hidden" name="usuario_reportado_id" value="">
-                    <input type="hidden" name="redirect" value="../VISTA/servicio.php?id=<?php echo $servicio['id']; ?>">
+                    <input type="hidden" name="redirect" value="servicio.php?id=<?php echo (int) $servicio['id']; ?>">
 
                     <?php if (isset($_GET['reporte'])): ?>
                         <div class="alert <?php echo $_GET['reporte'] === 'ok' ? 'alert-success' : 'alert-danger'; ?>">
@@ -137,6 +317,112 @@ $es_propietario   = $usuario_logueado && $usuario_logueado == $servicio['prestad
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+
+<script>
+(function () {
+    var formReserva = document.getElementById('formReserva');
+    if (!formReserva) return;
+
+    var pasoActual = 1;
+    var fechaElegida = null;
+    var horaElegida  = null;
+
+    var inputFechaVisible = document.getElementById('reservaFecha');
+    var selectHora        = document.getElementById('reservaHora');
+    var inputHidden       = document.getElementById('reservaFechaServicio');
+
+    var btnAtras     = document.getElementById('btnReservaAtras');
+    var btnSiguiente = document.getElementById('btnReservaSiguiente');
+    var btnConfirmar = document.getElementById('btnReservaConfirmar');
+
+    var paso1 = document.getElementById('paso1');
+    var paso2 = document.getElementById('paso2');
+    var paso3 = document.getElementById('paso3');
+
+    var puntos = [
+        document.getElementById('puntoPaso1'),
+        document.getElementById('puntoPaso2'),
+        document.getElementById('puntoPaso3')
+    ];
+
+    flatpickr.localize(flatpickr.l10ns.es);
+    var fp = flatpickr(inputFechaVisible, {
+        dateFormat: "Y-m-d",
+        minDate: "tomorrow",
+        disableMobile: true,
+        onChange: function (selectedDates, dateStr) {
+            fechaElegida = dateStr || null;
+            actualizarBotones();
+        }
+    });
+
+    selectHora.addEventListener('change', function () {
+        horaElegida = this.value || null;
+        actualizarBotones();
+    });
+
+    btnSiguiente.addEventListener('click', function () {
+        if (pasoActual < 3) { pasoActual++; renderPaso(); }
+    });
+
+    btnAtras.addEventListener('click', function () {
+        if (pasoActual > 1) { pasoActual--; renderPaso(); }
+    });
+
+    formReserva.addEventListener('submit', function (e) {
+        if (!fechaElegida || !horaElegida) { e.preventDefault(); return; }
+        inputHidden.value = fechaElegida + ' ' + horaElegida + ':00';
+    });
+
+    function renderPaso() {
+        paso1.classList.toggle('activo', pasoActual === 1);
+        paso2.classList.toggle('activo', pasoActual === 2);
+        paso3.classList.toggle('activo', pasoActual === 3);
+
+        for (var i = 0; i < puntos.length; i++) {
+            puntos[i].classList.remove('activo', 'completado');
+            if (i + 1 < pasoActual)      puntos[i].classList.add('completado');
+            else if (i + 1 === pasoActual) puntos[i].classList.add('activo');
+        }
+
+        if (pasoActual === 3) {
+            document.getElementById('resumenFecha').textContent = fechaElegida || '—';
+            document.getElementById('resumenHora').textContent  = horaElegida || '—';
+        }
+        actualizarBotones();
+    }
+
+    function actualizarBotones() {
+        btnAtras.disabled = (pasoActual === 1);
+
+        if (pasoActual === 3) {
+            btnSiguiente.classList.add('d-none');
+            btnConfirmar.classList.remove('d-none');
+            btnConfirmar.disabled = !(fechaElegida && horaElegida);
+        } else {
+            btnSiguiente.classList.remove('d-none');
+            btnConfirmar.classList.add('d-none');
+            if (pasoActual === 1) btnSiguiente.disabled = !fechaElegida;
+            else if (pasoActual === 2) btnSiguiente.disabled = !horaElegida;
+        }
+    }
+
+    var modalEl = document.getElementById('modalReserva');
+    modalEl.addEventListener('hidden.bs.modal', function () {
+        pasoActual = 1;
+        fechaElegida = null;
+        horaElegida  = null;
+        fp.clear();
+        selectHora.value = '';
+        inputHidden.value = '';
+        renderPaso();
+    });
+
+    renderPaso();
+})();
+</script>
+
 </body>
 </html>
- 

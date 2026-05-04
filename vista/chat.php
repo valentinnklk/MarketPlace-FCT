@@ -245,6 +245,86 @@ $usuario_id  = $data['usuario_id'];
                 </div>
             </div>
 
+            <?php
+            // ─────────────────────────────────────────────
+            // CONTRATO VINCULADO A LA CONVERSACIÓN
+            // ─────────────────────────────────────────────
+            $contrato_chat = null;
+            if (!empty($chat_activo['contrato_id'])) {
+                $stmt = $conexion->prepare(
+                    "SELECT id, cliente_id, servicio_id, estado,
+                            fecha_servicio, confirmacion_cliente, confirmacion_prestador
+                     FROM contratos
+                     WHERE id = ?
+                     LIMIT 1"
+                );
+                $stmt->execute([(int) $chat_activo['contrato_id']]);
+                $contrato_chat = $stmt->fetch(PDO::FETCH_ASSOC);
+            }
+
+            // Visibilidad del bloque de finalización
+            $puede_finalizar  = false;
+            $ya_confirmado_yo = false;
+            if ($contrato_chat) {
+                $en_estado_valido = in_array($contrato_chat['estado'], ['aceptado','en_proceso'], true);
+                $fecha_pasada     = strtotime($contrato_chat['fecha_servicio']) <= time();
+                $puede_finalizar  = $en_estado_valido && $fecha_pasada;
+
+                if ($es_cliente) {
+                    $ya_confirmado_yo = (int) $contrato_chat['confirmacion_cliente'] === 1;
+                } else {
+                    $ya_confirmado_yo = (int) $contrato_chat['confirmacion_prestador'] === 1;
+                }
+            }
+
+            // Visibilidad del bloque de valoración (solo cliente)
+            $ya_valorado = false;
+            if ($contrato_chat && $contrato_chat['estado'] === 'completado' && $es_cliente) {
+                $stmt = $conexion->prepare(
+                    "SELECT id FROM valoraciones WHERE contrato_id = ? AND revisor_id = ? LIMIT 1"
+                );
+                $stmt->execute([(int) $contrato_chat['id'], $usuario_id]);
+                $ya_valorado = (bool) $stmt->fetch();
+            }
+            ?>
+
+            <!-- Bloque de finalización (servicio prestado, falta confirmar) -->
+            <?php if ($puede_finalizar): ?>
+                <div class="alert alert-warning rounded-0 mb-0 px-3 py-2">
+                    <?php if ($ya_confirmado_yo): ?>
+                        <small>
+                            ✓ Ya confirmaste. Esperando al
+                            <?php echo $es_cliente ? 'prestador' : 'cliente'; ?>.
+                        </small>
+                    <?php else: ?>
+                        <form method="POST" action="../controladores/finalizar_servicio.php"
+                              class="d-flex gap-2 align-items-center mb-0">
+                            <input type="hidden" name="contrato_id"     value="<?php echo (int) $contrato_chat['id']; ?>">
+                            <input type="hidden" name="conversacion_id" value="<?php echo (int) $chat_activo['id']; ?>">
+                            <small class="me-auto">¿El servicio se ha completado satisfactoriamente?</small>
+                            <button type="submit" class="btn btn-success btn-sm">
+                                ✅ Marcar como finalizado
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Bloque de valoración (contrato completado y soy el cliente) -->
+            <?php if ($contrato_chat && $contrato_chat['estado'] === 'completado' && $es_cliente): ?>
+                <div class="alert alert-success rounded-0 mb-0 px-3 py-2">
+                    <?php if ($ya_valorado): ?>
+                        <small>⭐ Ya has valorado este servicio.</small>
+                    <?php else: ?>
+                        <div class="d-flex gap-2 align-items-center">
+                            <small class="me-auto">El servicio está completado. ¡Comparte tu experiencia!</small>
+                            <a href="reseñaVista.php?contrato_id=<?php echo (int) $contrato_chat['id']; ?>"
+                               class="btn btn-warning btn-sm">⭐ Dejar valoración</a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
             <!-- Mensajes -->
             <div class="mensajes-area" id="mensajes-area">
                 <?php foreach ($mensajes as $msg):

@@ -142,4 +142,29 @@ class PerfilModelo {
             'total' => (int) ($row['total'] ?? 0),
         ];
     }
+
+    // ---------------------------------------------
+    // NOTIFICACIONES DEL USUARIO
+    // ---------------------------------------------
+    public function getNotificaciones(int $idUsuario, int $limite = 50): array {
+        $sql = "SELECT id, titulo, mensaje, tipo, leida, fecha_envio, fecha_lectura
+                FROM notificaciones_usuario
+                WHERE usuario_destino_id = ?
+                ORDER BY fecha_envio DESC
+                LIMIT " . (int) $limite;
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute([$idUsuario]);
+        return $stmt->fetchAll();
+    }
+
+    public function getTotalNotificacionesNoLeidas(int $idUsuario): int {
+        $stmt = $this->conexion->prepare(
+            "SELECT COUNT(*) AS total
+             FROM notificaciones_usuario
+             WHERE usuario_destino_id = ? AND leida = 0"
+        );
+        $stmt->execute([$idUsuario]);
+        $row = $stmt->fetch();
+        return (int) ($row['total'] ?? 0);
+    }
 }

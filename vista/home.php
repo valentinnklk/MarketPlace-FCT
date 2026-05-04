@@ -13,6 +13,17 @@ $servicios = $servicioController->buscar($_GET['buscar'] ?? '');
 $chatModelo = new ChatModelo($conexion);
 $usuario_id = $_SESSION['usuario_id'] ?? null;
 $no_leidos = ($usuario_id) ? $chatModelo->getTotalNoLeidos($usuario_id) : 0;
+
+// Notificaciones no leídas (badge en navbar)
+$no_leidos_notif = 0;
+if ($usuario_id) {
+    $stmt = $conexion->prepare(
+        "SELECT COUNT(*) FROM notificaciones_usuario
+         WHERE usuario_destino_id = ? AND leida = 0"
+    );
+    $stmt->execute([$usuario_id]);
+    $no_leidos_notif = (int) $stmt->fetchColumn();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -49,6 +60,15 @@ $no_leidos = ($usuario_id) ? $chatModelo->getTotalNoLeidos($usuario_id) : 0;
                 <?php if ($no_leidos > 0): ?>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         <?php echo $no_leidos; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
+
+            <a href="perfil.php?tab=notificaciones" class="btn btn-outline-light btn-sm position-relative">
+                🔔 Notificaciones
+                <?php if ($no_leidos_notif > 0): ?>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <?php echo $no_leidos_notif; ?>
                     </span>
                 <?php endif; ?>
             </a>

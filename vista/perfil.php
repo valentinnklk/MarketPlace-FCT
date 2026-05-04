@@ -1,10 +1,6 @@
 <?php
 // vista/perfil.php
-// Punto de entrada del perfil.
-// Sigue el mismo patrón que home.php:
-//   - incluye conexion.php desde la raíz (../)
-//   - incluye el controlador
-//   - llama al método correspondiente
+// Punto de entrada del perfil. Usa el usuario logueado real ($_SESSION['usuario_id']).
 
 session_start();
 require_once "../controladores/proteger.php";
@@ -13,9 +9,7 @@ require_once '../controladores/perfilController.php';
 
 $perfilController = new PerfilController($conexion);
 
-// Por ahora id=1 (usuario de prueba).
-// Cuando tengas sesiones activas cámbialo por: $_SESSION['id']
-$idUsuario = 1;
+$idUsuario = (int) $_SESSION['usuario_id'];
 
 $accion = $_GET['accion'] ?? null;
 
