@@ -74,6 +74,10 @@ if ($usuario_id) {
             </a>
 
             <a href="perfil.php" class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
+
+            <?php if (isset($_SESSION['es_admin']) && $_SESSION['es_admin'] == 1): ?>
+                <a href="panelAdministracion.php" class="btn btn-warning btn-sm">🔧 Panel de administración</a>
+            <?php endif; ?>
         </div>
     </div>
 </nav>
