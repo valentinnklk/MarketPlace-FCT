@@ -103,10 +103,20 @@ if (isset($_POST['marcarResuelto'])) {
     exit();
 }
 
-if (isset($_POST['marcarRechazado'])) {
+// En panelAdministracionControlador.php añade este bloque
+if (isset($_POST['cambiarEstadoReporte'])) {
     $reporte_id = (int) $_POST['reporte_id'];
 
-    actualizarEstadoReporte($reporte_id, 'rechazado');
+    // Necesitas una función en el modelo que devuelva el reporte por ID
+    $reporte = obtenerReportePorId($reporte_id);
+
+    if ($reporte) {
+        $nuevoEstado = ($reporte['estado'] === 'pendiente')
+            ? 'resuelto'
+            : 'pendiente';
+
+        actualizarEstadoReporte($reporte_id, $nuevoEstado);
+    }
 
     header("Location: ../VISTA/panelAdministracion.php");
     exit();

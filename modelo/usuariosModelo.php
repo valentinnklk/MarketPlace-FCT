@@ -114,4 +114,15 @@ function actualizarEstadoReporte($reporte_id, $estado) {
 
     return $stmt->execute();
 }
+// En usuariosModelo.php añade esta función
+function obtenerReportePorId($reporte_id) {
+    global $conexion;
+
+    $sql = "SELECT id, estado FROM reportes WHERE id = :id";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(':id', $reporte_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
 ?>

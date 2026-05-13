@@ -134,33 +134,20 @@ $totalGeneral = array_sum($totales);
                                 </button>
                             </form>
                             <form action="../CONTROLADORES/panelAdministracionControlador.php"
-                                method="POST"
-                                class="d-inline"
-                                onsubmit="return confirm('¿Eliminar este reporte?');">
-                                <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
-                                <button type="submit"
-                                        name="eliminarReporte"
-                                        class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-x-circle"></i> Quitar reporte
-                                </button>
-                            </form>
-                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
-                                method="POST"
-                                class="d-inline">
-                                <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
+                            method="POST"
+                            class="d-inline">
+                            <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
 
-                                <button type="submit"
-                                        name="marcarResuelto"
-                                        class="btn btn-sm btn-success">
-                                    Resuelto
-                                </button>
-
-                                <button type="submit"
-                                        name="marcarRechazado"
-                                        class="btn btn-sm btn-warning">
-                                    Rechazado
-                                </button>
-                            </form>
+                            <button type="submit"
+                                    name="cambiarEstadoReporte"
+                                    class="btn btn-sm <?php echo $r['estado'] === 'pendiente' ? 'btn-success' : 'btn-warning'; ?>">
+                                <?php if ($r['estado'] === 'pendiente'): ?>
+                                    <i class="bi bi-check-circle"></i> Marcar como resuelto
+                                <?php else: ?>
+                                    <i class="bi bi-arrow-counterclockwise"></i> Volver a pendiente
+                                <?php endif; ?>
+                            </button>
+                        </form>
                         </td>
                         </tr>
                     <?php endforeach; ?>
@@ -228,21 +215,19 @@ $totalGeneral = array_sum($totales);
                                     <i class="bi bi-x-circle"></i> Quitar reporte
                                 </button>
                             </form>
-                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
+                           <form action="../CONTROLADORES/panelAdministracionControlador.php"
                                 method="POST"
                                 class="d-inline">
                                 <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
 
                                 <button type="submit"
-                                        name="marcarResuelto"
-                                        class="btn btn-sm btn-success">
-                                    Resuelto
-                                </button>
-
-                                <button type="submit"
-                                        name="marcarRechazado"
-                                        class="btn btn-sm btn-warning">
-                                    Rechazado
+                                        name="cambiarEstadoReporte"
+                                        class="btn btn-sm <?php echo $r['estado'] === 'pendiente' ? 'btn-success' : 'btn-warning'; ?>">
+                                    <?php if ($r['estado'] === 'pendiente'): ?>
+                                        <i class="bi bi-check-circle"></i> Marcar como resuelto
+                                    <?php else: ?>
+                                        <i class="bi bi-arrow-counterclockwise"></i> Volver a pendiente
+                                    <?php endif; ?>
                                 </button>
                             </form>
                         </td>
