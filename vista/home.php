@@ -1,6 +1,5 @@
 <?php
 // vista/home.php
-require_once "../controladores/proteger.php";
 require_once "../conexion.php";
 require_once "../controladores/usuarioController.php";
 require_once "../controladores/servicioController.php";
@@ -28,9 +27,15 @@ if ($usuario_id) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Marketplace – Inicio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
     <style>
         .badge-notify {
             position: absolute;
@@ -42,8 +47,9 @@ if ($usuario_id) {
 </head>
 
 <body class="bg-light">
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation" aria-label="Principal">
     <div class="container">
         <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
 
@@ -51,12 +57,12 @@ if ($usuario_id) {
             <a href="subirServicio.php" class="btn btn-success btn-sm">+ Ofrecer servicio</a>
             
             <form action="home.php" method="GET" class="d-flex mx-2">
-                <input type="text" name="buscar" class="form-control form-control-sm me-2" placeholder="Buscar productos..." value="<?php echo htmlspecialchars($_GET['buscar'] ?? ''); ?>" style="width: 250px;">
-                <button type="submit" class="btn btn-outline-light btn-sm">🔍</button>
+                <input type="text" name="buscar" aria-label="Buscar servicios" class="form-control form-control-sm me-2" placeholder="Buscar productos..." value="<?php echo htmlspecialchars($_GET['buscar'] ?? ''); ?>" style="width: 250px;">
+                <button aria-label="Buscar" type="submit" class="btn btn-outline-light btn-sm"><i class="bi bi-search" aria-hidden="true"></i></button>
             </form>
 
             <a href="chat.php" class="btn btn-outline-light btn-sm position-relative">
-                💬 Mensajes
+                <i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Mensajes
                 <?php if ($no_leidos > 0): ?>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         <?php echo $no_leidos; ?>
@@ -65,7 +71,7 @@ if ($usuario_id) {
             </a>
 
             <a href="perfil.php?tab=notificaciones" class="btn btn-outline-light btn-sm position-relative">
-                🔔 Notificaciones
+                <i class="bi bi-bell-fill" aria-hidden="true"></i> Notificaciones
                 <?php if ($no_leidos_notif > 0): ?>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         <?php echo $no_leidos_notif; ?>
@@ -73,16 +79,16 @@ if ($usuario_id) {
                 <?php endif; ?>
             </a>
 
-            <a href="perfil.php" class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
+            <a href="perfil.php" class="btn btn-outline-light btn-sm"><i class="bi bi-person-fill" aria-hidden="true"></i> Mi perfil</a>
 
             <?php if (isset($_SESSION['es_admin']) && $_SESSION['es_admin'] == 1): ?>
-                <a href="panelAdministracion.php" class="btn btn-warning btn-sm">🔧 Panel de administración</a>
+                <a href="panelAdministracion.php" class="btn btn-warning btn-sm"><i class="bi bi-wrench" aria-hidden="true"></i> Panel de administración</a>
             <?php endif; ?>
         </div>
     </div>
 </nav>
 
-<div class="container mt-5">
+<div id="contenido" role="main" class="container mt-5">
     <h1 class="text-center mb-4">Servicios disponibles</h1>
 
     <div class="row">
@@ -129,5 +135,8 @@ if ($usuario_id) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php include 'partials/footer.php'; ?>
+<?php include 'partials/cookies-banner.php'; ?>
 </body>
 </html>

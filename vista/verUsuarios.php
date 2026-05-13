@@ -18,18 +18,25 @@ if (!$usuario) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Perfil de <?php echo htmlspecialchars($usuario['nombre']); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
 </head>
 <body class="bg-light">
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
-<nav class="navbar navbar-dark bg-dark px-4">
+<nav class="navbar navbar-dark bg-dark px-4" role="navigation" aria-label="Principal">
     <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
     <a href="javascript:history.back()" class="btn btn-outline-light btn-sm">← Volver</a>
 </nav>
 
-<div class="container py-5">
+<div id="contenido" role="main" class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
 
@@ -40,11 +47,11 @@ if (!$usuario) {
                          alt="Avatar" class="rounded-circle" style="width:100px;height:100px;object-fit:cover;">
                     <div>
                         <h3 class="mb-1"><?php echo htmlspecialchars($usuario['nombre']); ?></h3>
-                        <p class="text-muted mb-1">📍 <?php echo htmlspecialchars($usuario['ubicacion']); ?></p>
-                        <p class="text-muted mb-1">📧 <?php echo htmlspecialchars($usuario['email']); ?></p>
-                        <p class="text-muted mb-1">📅 Miembro desde <?php echo date('d/m/Y', strtotime($usuario['fecha_registro'])); ?></p>
+                        <p class="text-muted mb-1"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i> <?php echo htmlspecialchars($usuario['ubicacion']); ?></p>
+                        <p class="text-muted mb-1"><i class="bi bi-envelope-fill" aria-hidden="true"></i> <?php echo htmlspecialchars($usuario['email']); ?></p>
+                        <p class="text-muted mb-1"><i class="bi bi-calendar-event" aria-hidden="true"></i> Miembro desde <?php echo date('d/m/Y', strtotime($usuario['fecha_registro'])); ?></p>
                         <?php if ($usuario['tiempo_respuesta']): ?>
-                            <p class="text-muted mb-0">⚡ Tiempo de respuesta: <?php echo $usuario['tiempo_respuesta']; ?>h</p>
+                            <p class="text-muted mb-0"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Tiempo de respuesta: <?php echo $usuario['tiempo_respuesta']; ?>h</p>
                         <?php endif; ?>
                         <?php if ($usuario['es_administrador']): ?>
                             <span class="badge bg-danger mt-2">Administrador</span>
@@ -57,7 +64,7 @@ if (!$usuario) {
             <?php if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] != $id): ?>
                 <div class="mb-4">
                     <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalReporteUsuario">
-                        🚩 Reportar usuario
+                        <i class="bi bi-flag-fill" aria-hidden="true"></i> Reportar usuario
                     </button>
                 </div>
             <?php endif; ?>
@@ -89,15 +96,15 @@ if (!$usuario) {
 
 <!-- Modal reportar usuario -->
 <?php if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] != $id): ?>
-<div class="modal fade" id="modalReporteUsuario" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">🚩 Reportar usuario</h5>
+<div class="modal fade" id="modalReporteUsuario" tabindex="-1" role="dialog" aria-modal="true" tabindex="-1">
+    <div class="modal-dialog" role="dialog" aria-modal="true" tabindex="-1">
+        <div class="modal-content" role="dialog" aria-modal="true" tabindex="-1">
+            <div class="modal-header" role="dialog" aria-modal="true" tabindex="-1">
+                <h5 class="modal-title"><i class="bi bi-flag-fill" aria-hidden="true"></i> Reportar usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="../controladores/reportarControlador.php" method="POST">
-                <div class="modal-body">
+                <div class="modal-body" role="dialog" aria-modal="true" tabindex="-1">
                     <input type="hidden" name="tipo" value="usuario">
                     <input type="hidden" name="servicio_id" value="">
                     <input type="hidden" name="usuario_reportado_id" value="<?php echo $usuario['id']; ?>">
@@ -105,7 +112,7 @@ if (!$usuario) {
 
                     <?php if (isset($_GET['reporte'])): ?>
                         <div class="alert <?php echo $_GET['reporte'] === 'ok' ? 'alert-success' : 'alert-danger'; ?>">
-                            <?php echo $_GET['reporte'] === 'ok' ? '✅ Reporte enviado.' : '❌ El motivo no puede estar vacío.'; ?>
+                            <?php echo $_GET['reporte'] === 'ok' ? '<i class="bi bi-check-circle-fill" aria-hidden="true"></i> Reporte enviado.' : '<i class="bi bi-x-circle-fill" aria-hidden="true"></i> El motivo no puede estar vacío.'; ?>
                         </div>
                     <?php endif; ?>
 
@@ -119,7 +126,7 @@ if (!$usuario) {
                         <option value="Otro">Otro</option>
                     </select>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" role="dialog" aria-modal="true" tabindex="-1">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-danger">Enviar reporte</button>
                 </div>
@@ -130,5 +137,8 @@ if (!$usuario) {
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php include 'partials/footer.php'; ?>
+<?php include 'partials/cookies-banner.php'; ?>
 </body>
 </html>

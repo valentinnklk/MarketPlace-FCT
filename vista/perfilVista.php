@@ -7,9 +7,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Mi Perfil – <?php echo htmlspecialchars($usuario['nombre']); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
     <style>
         .avatar-circulo {
             width: 70px; height: 70px; border-radius: 50%;
@@ -23,20 +29,21 @@
     </style>
 </head>
 <body class="bg-light">
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation" aria-label="Principal">
     <div class="container">
         <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
         <div class="d-flex gap-2">
             <a href="home.php"         class="btn btn-outline-light btn-sm">Inicio</a>
             <a href="subirServicio.php" class="btn btn-success btn-sm">+ Ofrecer servicio</a>
-            <a href="perfil.php"       class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
+            <a href="perfil.php"       class="btn btn-outline-light btn-sm"><i class="bi bi-person-fill" aria-hidden="true"></i> Mi perfil</a>
         </div>
     </div>
 </nav>
 
-<div class="container mt-4">
+<div id="contenido" role="main" class="container mt-4">
 
     <!-- CABECERA -->
     <div class="card mb-4">
@@ -57,7 +64,7 @@
                     <?php endif; ?>
                     <?php if ($valoracionMedia['total'] > 0): ?>
                         <div class="mt-1">
-                            <span class="estrellas"><?php echo str_repeat('★', round($valoracionMedia['media'])) . str_repeat('☆', 5 - round($valoracionMedia['media'])); ?></span>
+                            <span class="estrellas"><?php echo str_repeat('<i class="bi bi-star-fill" aria-hidden="true"></i>', round($valoracionMedia['media'])) . str_repeat('<i class="bi bi-star" aria-hidden="true"></i>', 5 - round($valoracionMedia['media'])); ?></span>
                             <small class="text-muted ms-1">
                                 <?php echo number_format($valoracionMedia['media'], 1); ?> · <?php echo $valoracionMedia['total']; ?> valoracion<?php echo $valoracionMedia['total'] !== 1 ? 'es' : ''; ?>
                             </small>
@@ -102,25 +109,25 @@
     <ul class="nav nav-pills mb-3 flex-wrap gap-1">
         <li class="nav-item">
             <a class="nav-link <?php echo $tabActiva === 'servicios'     ? 'active' : ''; ?>" href="?tab=servicios">
-                🛠️ Mis servicios
+                <i class="bi bi-tools" aria-hidden="true"></i> Mis servicios
                 <span class="badge bg-secondary"><?php echo count($serviciosOfrecidos); ?></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $tabActiva === 'contratados'   ? 'active' : ''; ?>" href="?tab=contratados">
-                📋 Contratados
+                <i class="bi bi-clipboard-check" aria-hidden="true"></i> Contratados
                 <span class="badge bg-secondary"><?php echo count($contratosCliente); ?></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $tabActiva === 'recibidos'     ? 'active' : ''; ?>" href="?tab=recibidos">
-                📥 Pedidos recibidos
+                <i class="bi bi-inbox-fill" aria-hidden="true"></i> Pedidos recibidos
                 <span class="badge bg-secondary"><?php echo count($contratosPrestador); ?></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $tabActiva === 'favoritos'     ? 'active' : ''; ?>" href="?tab=favoritos">
-                ♡ Favoritos
+                <i class="bi bi-heart" aria-hidden="true"></i> Favoritos
                 <span class="badge bg-secondary"><?php echo count($favoritos); ?></span>
             </a>
         </li>
@@ -131,7 +138,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $tabActiva === 'notificaciones' ? 'active' : ''; ?>" href="?tab=notificaciones">
-                🔔 Notificaciones
+                <i class="bi bi-bell-fill" aria-hidden="true"></i> Notificaciones
                 <?php if ($notificacionesNoLeidas > 0): ?>
                     <span class="badge bg-danger"><?php echo $notificacionesNoLeidas; ?></span>
                 <?php endif; ?>
@@ -139,7 +146,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link <?php echo $tabActiva === 'configuracion' ? 'active' : ''; ?>" href="?tab=configuracion">
-                ⚙️ Configuración
+                <i class="bi bi-gear-fill" aria-hidden="true"></i> Configuración
             </a>
         </li>
     </ul>
@@ -172,7 +179,7 @@
                                 </p>
                                 <?php if ($s['valoracion_media'] > 0): ?>
                                     <span class="estrellas small">
-                                        <?php echo str_repeat('★', round($s['valoracion_media'])) . str_repeat('☆', 5 - round($s['valoracion_media'])); ?>
+                                        <?php echo str_repeat('<i class="bi bi-star-fill" aria-hidden="true"></i>', round($s['valoracion_media'])) . str_repeat('<i class="bi bi-star" aria-hidden="true"></i>', 5 - round($s['valoracion_media'])); ?>
                                     </span>
                                     <small class="text-muted"><?php echo number_format($s['valoracion_media'], 1); ?></small>
                                 <?php endif; ?>
@@ -226,7 +233,7 @@
 
                                 <?php if ($c['estado'] === 'completado'): ?>
                                     <?php if (!empty($c['reseña_id'])): ?>
-                                        <span class="badge bg-success mt-1 d-inline-block">✓ Valorado</span>
+                                        <span class="badge bg-success mt-1 d-inline-block"><i class="bi bi-check" aria-hidden="true"></i> Valorado</span>
                                     <?php else: ?>
                                         <a href="reseñaVista.php?contrato_id=<?php echo (int) $c['id']; ?>"
                                            class="btn btn-warning btn-sm mt-1">⭐ Valorar</a>
@@ -303,13 +310,13 @@
                                 </p>
                                 <small class="text-muted">Prestador: <?php echo htmlspecialchars($f['prestador']); ?></small>
                                 <br>
-                                <small class="text-muted">❤️ Guardado el <?php echo date('d/m/Y', strtotime($f['fecha_agregado'])); ?></small>
+                                <small class="text-muted"><i class="bi bi-heart-fill" aria-hidden="true"></i> Guardado el <?php echo date('d/m/Y', strtotime($f['fecha_agregado'])); ?></small>
                             </div>
                             <div class="card-footer d-flex gap-2">
                                 <a href="servicio.php?id=<?php echo $f['id']; ?>" class="btn btn-outline-primary btn-sm flex-fill">Ver</a>
                                 <form method="POST" action="perfil.php?accion=eliminarFavorito" class="flex-fill">
                                     <input type="hidden" name="servicio_id" value="<?php echo $f['id']; ?>">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">✕ Quitar</button>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="bi bi-x" aria-hidden="true"></i> Quitar</button>
                                 </form>
                             </div>
                         </div>
@@ -324,7 +331,7 @@
         <div class="d-flex align-items-center gap-3 mb-3">
             <h5 class="mb-0">Valoraciones recibidas</h5>
             <?php if ($valoracionMedia['total'] > 0): ?>
-                <span class="estrellas fs-5"><?php echo str_repeat('★', round($valoracionMedia['media'])) . str_repeat('☆', 5 - round($valoracionMedia['media'])); ?></span>
+                <span class="estrellas fs-5"><?php echo str_repeat('<i class="bi bi-star-fill" aria-hidden="true"></i>', round($valoracionMedia['media'])) . str_repeat('<i class="bi bi-star" aria-hidden="true"></i>', 5 - round($valoracionMedia['media'])); ?></span>
                 <span class="text-muted"><?php echo number_format($valoracionMedia['media'], 1); ?> de media · <?php echo $valoracionMedia['total']; ?> valoracion<?php echo $valoracionMedia['total'] !== 1 ? 'es' : ''; ?></span>
             <?php endif; ?>
         </div>
@@ -340,13 +347,13 @@
                                 <span class="fw-bold"><?php echo htmlspecialchars($v['autor']); ?></span>
                                 <div>
                                     <span class="estrellas">
-                                        <?php echo str_repeat('★', $v['puntuacion']) . str_repeat('☆', 5 - $v['puntuacion']); ?>
+                                        <?php echo str_repeat('<i class="bi bi-star-fill" aria-hidden="true"></i>', $v['puntuacion']) . str_repeat('<i class="bi bi-star" aria-hidden="true"></i>', 5 - $v['puntuacion']); ?>
                                     </span>
                                     <small class="text-muted ms-2"><?php echo date('d/m/Y', strtotime($v['fecha'])); ?></small>
                                 </div>
                             </div>
                             <p class="mb-1"><?php echo htmlspecialchars($v['comentario'] ?? ''); ?></p>
-                            <small class="text-muted">🛠️ <?php echo htmlspecialchars($v['servicio']); ?></small>
+                            <small class="text-muted"><i class="bi bi-tools" aria-hidden="true"></i> <?php echo htmlspecialchars($v['servicio']); ?></small>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -359,7 +366,7 @@
         <h5 class="mb-3">Configuración de la cuenta</h5>
 
         <div class="card mb-3">
-            <div class="card-header fw-bold">👤 Datos personales</div>
+            <div class="card-header fw-bold"><i class="bi bi-person-fill" aria-hidden="true"></i> Datos personales</div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Nombre</span>
@@ -383,7 +390,7 @@
         </div>
 
         <div class="card border-danger">
-            <div class="card-header text-danger fw-bold">⚠️ Zona de peligro</div>
+            <div class="card-header text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> Zona de peligro</div>
             <div class="card-body">
                 <p class="text-muted small mb-3">Esta acción es irreversible.</p>
                 <button class="btn btn-outline-danger btn-sm">Eliminar mi cuenta</button>
@@ -393,7 +400,7 @@
     <!-- ── NOTIFICACIONES ── -->
     <?php elseif ($tabActiva === 'notificaciones'): ?>
 
-        <h5 class="mb-3">🔔 Notificaciones</h5>
+        <h5 class="mb-3"><i class="bi bi-bell-fill" aria-hidden="true"></i> Notificaciones</h5>
 
         <?php if (empty($notificaciones)): ?>
             <div class="alert alert-secondary text-center">No tienes notificaciones todavía.</div>
@@ -401,15 +408,15 @@
             <div class="d-flex flex-column gap-2">
                 <?php foreach ($notificaciones as $n):
                     $iconos = [
-                        'nueva_reserva'        => '📅',
-                        'reserva_aceptada'     => '✅',
-                        'reserva_rechazada'    => '❌',
-                        'servicio_finalizado'  => '🏁',
-                        'solicitud_aprobada'   => '👍',
-                        'solicitud_rechazada'  => '👎',
-                        'contrato_actualizado' => '📝',
+                        'nueva_reserva'        => '<i class="bi bi-calendar-event" aria-hidden="true"></i>',
+                        'reserva_aceptada'     => '<i class="bi bi-check-circle-fill" aria-hidden="true"></i>',
+                        'reserva_rechazada'    => '<i class="bi bi-x-circle-fill" aria-hidden="true"></i>',
+                        'servicio_finalizado'  => '<i class="bi bi-flag-fill" aria-hidden="true"></i>',
+                        'solicitud_aprobada'   => '<i class="bi bi-hand-thumbs-up-fill" aria-hidden="true"></i>',
+                        'solicitud_rechazada'  => '<i class="bi bi-hand-thumbs-down-fill" aria-hidden="true"></i>',
+                        'contrato_actualizado' => '<i class="bi bi-pencil-square" aria-hidden="true"></i>',
                     ];
-                    $icono = $iconos[$n['tipo']] ?? '🔔';
+                    $icono = $iconos[$n['tipo']] ?? '<i class="bi bi-bell-fill" aria-hidden="true"></i>';
 
                     $contrato_id_notif     = null;
                     $conversacion_id_notif = null;
@@ -445,19 +452,19 @@
                                         <input type="hidden" name="contrato_id"     value="<?php echo $contrato_id_notif; ?>">
                                         <input type="hidden" name="notificacion_id" value="<?php echo (int) $n['id']; ?>">
                                         <input type="hidden" name="accion"          value="aceptar">
-                                        <button type="submit" class="btn btn-success btn-sm w-100">✅ Aceptar</button>
+                                        <button type="submit" class="btn btn-success btn-sm w-100"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Aceptar</button>
                                     </form>
                                     <form method="POST" action="../controladores/responder_reserva.php" class="flex-fill">
                                         <input type="hidden" name="contrato_id"     value="<?php echo $contrato_id_notif; ?>">
                                         <input type="hidden" name="notificacion_id" value="<?php echo (int) $n['id']; ?>">
                                         <input type="hidden" name="accion"          value="rechazar">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">❌ Rechazar</button>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="bi bi-x-circle-fill" aria-hidden="true"></i> Rechazar</button>
                                     </form>
                                 </div>
                             <?php elseif ($n['tipo'] === 'reserva_aceptada' && $conversacion_id_notif): ?>
                                 <div class="mt-2">
                                     <a href="chat.php?chat_id=<?php echo $conversacion_id_notif; ?>"
-                                       class="btn btn-outline-primary btn-sm">💬 Ir al chat</a>
+                                       class="btn btn-outline-primary btn-sm"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Ir al chat</a>
                                 </div>
                             <?php elseif ($n['tipo'] === 'servicio_finalizado' && $contrato_id_notif): ?>
                                 <div class="mt-2">
@@ -476,5 +483,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php include 'partials/footer.php'; ?>
+<?php include 'partials/cookies-banner.php'; ?>
 </body>
 </html>

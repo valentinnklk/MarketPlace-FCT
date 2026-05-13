@@ -32,6 +32,11 @@ $usuario_id  = $data['usuario_id'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mensajes · Marketplace</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
     <style>
         html, body { height: 100%; margin: 0; }
 
@@ -160,16 +165,17 @@ $usuario_id  = $data['usuario_id'];
     </style>
 </head>
 <body class="bg-light">
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation" aria-label="Principal">
+    <div id="contenido" role="main" class="container">
         <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
         <div class="d-flex gap-2 align-items-center">
             <a href="home.php"   class="btn btn-outline-light btn-sm">Inicio</a>
-            <a href="perfil.php" class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
+            <a href="perfil.php" class="btn btn-outline-light btn-sm"><i class="bi bi-person-fill" aria-hidden="true"></i> Mi perfil</a>
             <a href="chat.php"   class="btn btn-outline-light btn-sm position-relative">
-                💬 Mensajes
+                <i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Mensajes
                 <span id="badge-navbar" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none">0</span>
             </a>
         </div>
@@ -180,7 +186,7 @@ $usuario_id  = $data['usuario_id'];
 
     <!-- ── SIDEBAR ── -->
     <aside class="sidebar">
-        <div class="sidebar-header">💬 Mensajes</div>
+        <div class="sidebar-header"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Mensajes</div>
         <div class="sidebar-list">
             <?php if (empty($chats)): ?>
                 <p class="text-muted text-center p-4 small">
@@ -293,7 +299,7 @@ $usuario_id  = $data['usuario_id'];
                 <div class="alert alert-warning rounded-0 mb-0 px-3 py-2">
                     <?php if ($ya_confirmado_yo): ?>
                         <small>
-                            ✓ Ya confirmaste. Esperando al
+                            <i class="bi bi-check" aria-hidden="true"></i> Ya confirmaste. Esperando al
                             <?php echo $es_cliente ? 'prestador' : 'cliente'; ?>.
                         </small>
                     <?php else: ?>
@@ -303,7 +309,7 @@ $usuario_id  = $data['usuario_id'];
                             <input type="hidden" name="conversacion_id" value="<?php echo (int) $chat_activo['id']; ?>">
                             <small class="me-auto">¿El servicio se ha completado satisfactoriamente?</small>
                             <button type="submit" class="btn btn-success btn-sm">
-                                ✅ Marcar como finalizado
+                                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Marcar como finalizado
                             </button>
                         </form>
                     <?php endif; ?>
@@ -343,7 +349,7 @@ $usuario_id  = $data['usuario_id'];
             <!-- Input -->
             <div class="chat-footer">
                 <textarea id="txt" placeholder="Escribe un mensaje... (Enter para enviar)" onkeydown="handleEnter(event)"></textarea>
-                <button class="btn-send" id="btn-enviar" onclick="enviar()">Enviar ➤</button>
+                <button class="btn-send" id="btn-enviar" onclick="enviar()">Enviar <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
             </div>
 
             <script>
@@ -456,5 +462,8 @@ $usuario_id  = $data['usuario_id'];
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php include 'partials/footer.php'; ?>
+<?php include 'partials/cookies-banner.php'; ?>
 </body>
 </html>

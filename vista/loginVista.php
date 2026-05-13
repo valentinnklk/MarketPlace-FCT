@@ -1,8 +1,13 @@
 <!-- bratu-->
  
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
@@ -83,6 +88,7 @@
     </style>
 </head>
 <body>
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
     <h1>Iniciar Sesión</h1>
     
     <?php if (isset($_GET['server_msg'])): ?>
@@ -113,5 +119,8 @@
     </div>
 
     <script src="../controladores/validacionUsuarios.js"></script>
+
+<?php include 'partials/footer.php'; ?>
+<?php include 'partials/cookies-banner.php'; ?>
 </body>
 </html>

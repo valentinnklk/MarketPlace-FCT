@@ -1,8 +1,13 @@
 <!-- bratu-->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario</title>
@@ -83,6 +88,7 @@
     </style>
 </head>
 <body>
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
     <h1>Registro de Usuario</h1>
     
     <?php if (isset($_GET['respuestaCreacionUsu'])): ?>
@@ -113,7 +119,18 @@
             <input type="text" name="ubicacion" id="ubicacionRegistro" required>
             <div id="errorUbicacionRegistro" class="error-js"></div>
             <br>
-            
+
+            <div class="legal-consent">
+                <label class="legal-consent-label">
+                    <input type="checkbox" name="aceptarLegal" id="aceptarLegal" value="1" required>
+                    <span>He leído y acepto las <a href="condicionesUso.php" target="_blank" rel="noopener noreferrer">Condiciones de Uso</a> y la <a href="politicaPrivacidad.php" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.</span>
+                </label>
+                <p class="legal-consent-note">
+                    <i class="bi bi-info-circle" aria-hidden="true"></i>
+                    Si va a ofrecer servicios, posteriormente deberá facilitar su DNI para verificar su identidad. <a href="politicaPrivacidad.php#dni" target="_blank" rel="noopener noreferrer">Más información sobre el tratamiento del DNI</a>.
+                </p>
+            </div>
+
             <input type="submit" name="registroEnviar" value="Registrarse">
         </form>
         
@@ -123,5 +140,8 @@
     </div>
 
     <script src="../CONTROLADOR/validacionUsuarios.js"></script>
+
+<?php include 'partials/footer.php'; ?>
+<?php include 'partials/cookies-banner.php'; ?>
 </body>
 </html>

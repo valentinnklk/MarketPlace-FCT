@@ -23,9 +23,15 @@ if ($usuario_logueado && $servicio) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Detalle del Servicio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <style>
         .servicio-card {
@@ -69,6 +75,7 @@ if ($usuario_logueado && $servicio) {
     </style>
 </head>
 <body class="bg-light">
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
 <div class="container py-5" style="max-width: 900px;">
 
@@ -83,13 +90,13 @@ if ($usuario_logueado && $servicio) {
         <?php if (isset($_GET['favorito'])): ?>
             <?php if ($_GET['favorito'] === 'agregar'): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    ❤️ Servicio añadido a tus favoritos.
+                    <i class="bi bi-heart-fill" aria-hidden="true"></i> Servicio añadido a tus favoritos.
                     <a href="../vista/perfil.php?tab=favoritos" class="alert-link ms-1">Ver favoritos →</a>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php elseif ($_GET['favorito'] === 'quitar'): ?>
                 <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-                    🤍 Servicio eliminado de tus favoritos.
+                    <i class="bi bi-heart" aria-hidden="true"></i> Servicio eliminado de tus favoritos.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
@@ -99,11 +106,11 @@ if ($usuario_logueado && $servicio) {
         <?php if (isset($_GET['reserva'])): ?>
             <?php if ($_GET['reserva'] === 'ok'): ?>
                 <div class="alert alert-success">
-                    ✅ Solicitud de reserva enviada correctamente. El prestador recibirá una notificación.
+                    <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Solicitud de reserva enviada correctamente. El prestador recibirá una notificación.
                 </div>
             <?php elseif ($_GET['reserva'] === 'error'): ?>
                 <div class="alert alert-danger">
-                    ❌ <?php echo htmlspecialchars(urldecode($_GET['msg'] ?? 'No se pudo procesar la reserva.')); ?>
+                    <i class="bi bi-x-circle-fill" aria-hidden="true"></i> <?php echo htmlspecialchars(urldecode($_GET['msg'] ?? 'No se pudo procesar la reserva.')); ?>
                 </div>
             <?php endif; ?>
         <?php endif; ?>
@@ -134,15 +141,15 @@ if ($usuario_logueado && $servicio) {
                 <div class="d-flex gap-2 flex-wrap">
                     <?php if (!$usuario_logueado): ?>
                         <a href="loginVista.php" class="btn btn-primary btn-accion">
-                            🔒 Inicia sesión para reservar
+                            <i class="bi bi-lock-fill" aria-hidden="true"></i> Inicia sesión para reservar
                         </a>
                         <a href="loginVista.php" class="btn btn-outline-secondary btn-accion">
-                            🤍 Guardar en favoritos
+                            <i class="bi bi-heart" aria-hidden="true"></i> Guardar en favoritos
                         </a>
                     <?php elseif (!$es_propietario && $servicio['activo']): ?>
                         <button type="button" class="btn btn-primary btn-accion"
                                 data-bs-toggle="modal" data-bs-target="#modalReserva">
-                            📅 Reservar servicio
+                            <i class="bi bi-calendar-event" aria-hidden="true"></i> Reservar servicio
                         </button>
 
                         <!-- Botón Favoritos -->
@@ -152,13 +159,13 @@ if ($usuario_logueado && $servicio) {
                             <button type="submit"
                                     class="btn w-100 <?php echo $es_favorito ? 'btn-danger' : 'btn-outline-danger'; ?>"
                                     title="<?php echo $es_favorito ? 'Quitar de favoritos' : 'Guardar en favoritos'; ?>">
-                                <?php echo $es_favorito ? '❤️ En favoritos' : '🤍 Guardar'; ?>
+                                <?php echo $es_favorito ? '<i class="bi bi-heart-fill" aria-hidden="true"></i> En favoritos' : '<i class="bi bi-heart" aria-hidden="true"></i> Guardar'; ?>
                             </button>
                         </form>
 
                         <button type="button" class="btn btn-outline-danger btn-accion"
                                 data-bs-toggle="modal" data-bs-target="#modalReporte">
-                            🚩 Reportar servicio
+                            <i class="bi bi-flag-fill" aria-hidden="true"></i> Reportar servicio
                         </button>
                     <?php elseif ($es_propietario): ?>
                         <div class="alert alert-info mb-0 w-100">
@@ -180,11 +187,11 @@ if ($usuario_logueado && $servicio) {
 <!-- MODAL DE RESERVA (3 PASOS)                                   -->
 <!-- ============================================================ -->
 <?php if ($servicio && $usuario_logueado && !$es_propietario && $servicio['activo']): ?>
-<div class="modal fade" id="modalReserva" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">📅 Reservar servicio</h5>
+<div class="modal fade" id="modalReserva" tabindex="-1" aria-hidden="true" role="dialog" aria-modal="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="dialog" aria-modal="true" tabindex="-1">
+        <div class="modal-content" role="dialog" aria-modal="true" tabindex="-1">
+            <div class="modal-header" role="dialog" aria-modal="true" tabindex="-1">
+                <h5 class="modal-title"><i class="bi bi-calendar-event" aria-hidden="true"></i> Reservar servicio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -192,7 +199,7 @@ if ($usuario_logueado && $servicio) {
                 <input type="hidden" name="servicio_id" value="<?php echo (int) $servicio['id']; ?>">
                 <input type="hidden" name="fecha_servicio" id="reservaFechaServicio" value="">
 
-                <div class="modal-body">
+                <div class="modal-body" role="dialog" aria-modal="true" tabindex="-1">
                     <!-- Indicador de pasos -->
                     <div class="paso-indicador">
                         <div class="punto activo" id="puntoPaso1">1</div>
@@ -255,7 +262,7 @@ if ($usuario_logueado && $servicio) {
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer" role="dialog" aria-modal="true" tabindex="-1">
                     <button type="button" class="btn btn-outline-secondary" id="btnReservaAtras" disabled>
                         ← Atrás
                     </button>
@@ -263,7 +270,7 @@ if ($usuario_logueado && $servicio) {
                         Siguiente →
                     </button>
                     <button type="submit" class="btn btn-success d-none" id="btnReservaConfirmar">
-                        ✅ Confirmar reserva
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Confirmar reserva
                     </button>
                 </div>
             </form>
@@ -276,15 +283,15 @@ if ($usuario_logueado && $servicio) {
 <!-- MODAL DE REPORTE                                             -->
 <!-- ============================================================ -->
 <?php if ($servicio && $usuario_logueado && !$es_propietario): ?>
-<div class="modal fade" id="modalReporte" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">🚩 Reportar servicio</h5>
+<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-modal="true" tabindex="-1">
+    <div class="modal-dialog" role="dialog" aria-modal="true" tabindex="-1">
+        <div class="modal-content" role="dialog" aria-modal="true" tabindex="-1">
+            <div class="modal-header" role="dialog" aria-modal="true" tabindex="-1">
+                <h5 class="modal-title"><i class="bi bi-flag-fill" aria-hidden="true"></i> Reportar servicio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="../controladores/reportarController.php" method="POST">
-                <div class="modal-body">
+                <div class="modal-body" role="dialog" aria-modal="true" tabindex="-1">
                     <input type="hidden" name="tipo" value="servicio">
                     <input type="hidden" name="servicio_id" value="<?php echo (int) $servicio['id']; ?>">
                     <input type="hidden" name="usuario_reportado_id" value="">
@@ -292,7 +299,7 @@ if ($usuario_logueado && $servicio) {
 
                     <?php if (isset($_GET['reporte'])): ?>
                         <div class="alert <?php echo $_GET['reporte'] === 'ok' ? 'alert-success' : 'alert-danger'; ?>">
-                            <?php echo $_GET['reporte'] === 'ok' ? '✅ Reporte enviado correctamente.' : '❌ El motivo no puede estar vacío.'; ?>
+                            <?php echo $_GET['reporte'] === 'ok' ? '<i class="bi bi-check-circle-fill" aria-hidden="true"></i> Reporte enviado correctamente.' : '<i class="bi bi-x-circle-fill" aria-hidden="true"></i> El motivo no puede estar vacío.'; ?>
                         </div>
                     <?php endif; ?>
 
@@ -306,7 +313,7 @@ if ($usuario_logueado && $servicio) {
                         <option value="Otro">Otro</option>
                     </select>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" role="dialog" aria-modal="true" tabindex="-1">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-danger">Enviar reporte</button>
                 </div>
@@ -424,5 +431,8 @@ if ($usuario_logueado && $servicio) {
 })();
 </script>
 
+
+<?php include 'partials/footer.php'; ?>
+<?php include 'partials/cookies-banner.php'; ?>
 </body>
 </html>

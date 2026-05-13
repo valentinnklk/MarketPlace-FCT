@@ -6,18 +6,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Ofrecer servicio – Marketplace</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
 </head>
 <body class="bg-light">
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation" aria-label="Principal">
+    <div id="contenido" role="main" class="container">
         <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
         <div class="d-flex gap-2">
             <a href="home.php"   class="btn btn-outline-light btn-sm">Inicio</a>
-            <a href="perfil.php" class="btn btn-outline-light btn-sm">👤 Mi perfil</a>
+            <a href="perfil.php" class="btn btn-outline-light btn-sm"><i class="bi bi-person-fill" aria-hidden="true"></i> Mi perfil</a>
         </div>
     </div>
 </nav>
@@ -41,7 +48,7 @@
 
         <!-- DESCRIPCIÓN -->
         <div class="card mb-3">
-            <div class="card-header fw-bold">✏️ Descripción</div>
+            <div class="card-header fw-bold"><i class="bi bi-pencil-fill" aria-hidden="true"></i> Descripción</div>
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">
@@ -66,7 +73,7 @@
 
         <!-- CATEGORÍA -->
         <div class="card mb-3">
-            <div class="card-header fw-bold">🏷️ Categoría</div>
+            <div class="card-header fw-bold"><i class="bi bi-tag-fill" aria-hidden="true"></i> Categoría</div>
             <div class="card-body">
                 <label class="form-label fw-semibold">
                     Categoría <span class="text-danger">*</span>
@@ -85,7 +92,7 @@
 
         <!-- PRECIO Y UNIDAD DE COBRO -->
         <div class="card mb-3">
-            <div class="card-header fw-bold">💶 Precio</div>
+            <div class="card-header fw-bold"><i class="bi bi-currency-euro" aria-hidden="true"></i> Precio</div>
             <div class="card-body row g-3">
                 <div class="col-8">
                     <label class="form-label fw-semibold">
@@ -140,7 +147,7 @@
 
         <!-- UBICACIÓN -->
         <div class="card mb-4">
-            <div class="card-header fw-bold">📍 Ubicación</div>
+            <div class="card-header fw-bold"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i> Ubicación</div>
             <div class="card-body">
                 <label class="form-label fw-semibold">
                     Ciudad <span class="text-danger">*</span>
@@ -155,7 +162,7 @@
 
         <!-- BOTONES -->
         <div class="d-flex gap-2 mb-5">
-            <button type="submit" class="btn btn-success flex-fill">🚀 Publicar servicio</button>
+            <button type="submit" class="btn btn-success flex-fill"><i class="bi bi-rocket-takeoff-fill" aria-hidden="true"></i> Publicar servicio</button>
             <a href="perfil.php" class="btn btn-outline-secondary">Cancelar</a>
         </div>
 
@@ -164,5 +171,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php include 'partials/footer.php'; ?>
+<?php include 'partials/cookies-banner.php'; ?>
 </body>
 </html>
