@@ -85,6 +85,18 @@ if ($usuario_logueado && $servicio) {
         <div class="mb-3">
             <a href="home.php" class="btn btn-outline-secondary btn-sm">← Volver</a>
         </div>
+        
+    <?php if (isset($_GET['reporte'])): ?>
+        <div class="alert <?php echo $_GET['reporte'] === 'ok' ? 'alert-success' : 'alert-danger'; ?> alert-dismissible fade show m-3" role="alert">
+            <?php echo $_GET['reporte'] === 'ok' 
+                ? '✅ Reporte enviado correctamente.' 
+                : '❌ El motivo no puede estar vacío.'; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <script>
+            setTimeout(() => document.querySelector('.alert')?.remove(), 3000);
+        </script>
+    <?php endif; ?>
 
         <!-- Mensaje flash de favorito -->
         <?php if (isset($_GET['favorito'])): ?>
@@ -295,13 +307,9 @@ if ($usuario_logueado && $servicio) {
                     <input type="hidden" name="tipo" value="servicio">
                     <input type="hidden" name="servicio_id" value="<?php echo (int) $servicio['id']; ?>">
                     <input type="hidden" name="usuario_reportado_id" value="">
-                    <input type="hidden" name="redirect" value="servicio.php?id=<?php echo (int) $servicio['id']; ?>">
+                    <input type="hidden" name="redirect" value="../vista/servicio.php?id=<?php echo (int) $servicio['id']; ?>">
 
-                    <?php if (isset($_GET['reporte'])): ?>
-                        <div class="alert <?php echo $_GET['reporte'] === 'ok' ? 'alert-success' : 'alert-danger'; ?>">
-                            <?php echo $_GET['reporte'] === 'ok' ? '<i class="bi bi-check-circle-fill" aria-hidden="true"></i> Reporte enviado correctamente.' : '<i class="bi bi-x-circle-fill" aria-hidden="true"></i> El motivo no puede estar vacío.'; ?>
-                        </div>
-                    <?php endif; ?>
+                    
 
                     <label class="form-label">Motivo del reporte</label>
                     <select name="motivo" class="form-select mb-3" required>
@@ -429,6 +437,7 @@ if ($usuario_logueado && $servicio) {
 
     renderPaso();
 })();
+
 </script>
 
 

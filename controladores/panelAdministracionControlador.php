@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . '/../MODELO/usuariosModelo.php';
 //bratu
 
@@ -56,7 +57,60 @@ if (isset($_POST['usuarioAdmin'])) {
         }
     }
 }
+if (isset($_POST['eliminarServicio'])) {
+    $servicio_id = (int) $_POST['servicio_id'];
 
+    eliminarServicioPorId($servicio_id);
+
+    header("Location: ../VISTA/panelAdministracion.php?respuestaCreacionUsu="
+        . urlencode("Servicio eliminado correctamente.")
+        . "&creacion=exito");
+    exit();
+}if (isset($_POST['eliminarUsuario'])) {
+    $usuario_id = (int) $_POST['usuario_id'];
+
+    // Evitar eliminar tu propia cuenta
+    if ($usuario_id == $_SESSION['usuario_id']) {
+        header("Location: ../VISTA/panelAdministracion.php?respuestaCreacionUsu="
+            . urlencode("No puedes eliminar tu propia cuenta.")
+            . "&creacion=error");
+        exit();
+    }
+
+    eliminarUsuarioPorId($usuario_id);
+
+    header("Location: ../VISTA/panelAdministracion.php?respuestaCreacionUsu="
+        . urlencode("Usuario eliminado correctamente.")
+        . "&creacion=exito");
+    exit();
+}
+if (isset($_POST['eliminarReporte'])) {
+    $reporte_id = (int) $_POST['reporte_id'];
+
+    eliminarReportePorId($reporte_id);
+
+    header("Location: ../VISTA/panelAdministracion.php?respuestaCreacionUsu="
+        . urlencode("Reporte eliminado correctamente.")
+        . "&creacion=exito");
+    exit();
+}
+if (isset($_POST['marcarResuelto'])) {
+    $reporte_id = (int) $_POST['reporte_id'];
+
+    actualizarEstadoReporte($reporte_id, 'resuelto');
+
+    header("Location: ../VISTA/panelAdministracion.php");
+    exit();
+}
+
+if (isset($_POST['marcarRechazado'])) {
+    $reporte_id = (int) $_POST['reporte_id'];
+
+    actualizarEstadoReporte($reporte_id, 'rechazado');
+
+    header("Location: ../VISTA/panelAdministracion.php");
+    exit();
+}
 // Redirigir de vuelta a la vista con los mensajes en la URL
 $tipo = $exito ? 'exito' : 'error';
 $mensajeCodificado = urlencode($mensaje);

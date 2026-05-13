@@ -56,7 +56,7 @@ $totalGeneral = array_sum($totales);
             <div class="card text-white bg-secondary text-center">
                 <div class="card-body">
                     <h2><?php echo $totalGeneral; ?></h2>
-                    <p class="mb-0">Total reportes</p>
+                    <p class="mb-0" style="color: black">Total reportes</p>
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@ $totalGeneral = array_sum($totales);
             <div class="card text-white bg-warning text-center">
                 <div class="card-body">
                     <h2><?php echo $totales['pendiente']; ?></h2>
-                    <p class="mb-0">Pendientes</p>
+                    <p class="mb-0" style="color: black">Pendientes</p>
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@ $totalGeneral = array_sum($totales);
             <div class="card text-white bg-success text-center">
                 <div class="card-body">
                     <h2><?php echo $totales['resuelto']; ?></h2>
-                    <p class="mb-0">Resueltos</p>
+                    <p class="mb-0" style="color: black">Resueltos</p>
                 </div>
             </div>
         </div>
@@ -80,7 +80,7 @@ $totalGeneral = array_sum($totales);
             <div class="card text-white bg-danger text-center">
                 <div class="card-body">
                     <h2><?php echo $totales['rechazado']; ?></h2>
-                    <p class="mb-0">Rechazados</p>
+                    <p class="mb-0" style="color: black">Rechazados</p>
                 </div>
             </div>
         </div>
@@ -117,9 +117,51 @@ $totalGeneral = array_sum($totales);
                             </td>
                             <td><?php echo date('d/m/Y', strtotime($r['fecha_creacion'])); ?></td>
                             <td>
-                                <a href="servicio.php?id=<?php echo $r['servicio_id']; ?>"
-                                   class="btn btn-sm btn-outline-primary">Ver servicio</a>
-                            </td>
+                            <a href="servicio.php?id=<?php echo (int) $r['servicio_id']; ?>"
+                            class="btn btn-sm btn-outline-primary mb-1">
+                                Ver servicio
+                            </a>
+
+                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
+                                method="POST"
+                                class="d-inline"
+                                onsubmit="return confirm('¿Seguro que deseas eliminar este anuncio?');">
+                                <input type="hidden" name="servicio_id" value="<?php echo (int) $r['servicio_id']; ?>">
+                                <button type="submit"
+                                        name="eliminarServicio"
+                                        class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i> Eliminar anuncio
+                                </button>
+                            </form>
+                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
+                                method="POST"
+                                class="d-inline"
+                                onsubmit="return confirm('¿Eliminar este reporte?');">
+                                <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
+                                <button type="submit"
+                                        name="eliminarReporte"
+                                        class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Quitar reporte
+                                </button>
+                            </form>
+                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
+                                method="POST"
+                                class="d-inline">
+                                <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
+
+                                <button type="submit"
+                                        name="marcarResuelto"
+                                        class="btn btn-sm btn-success">
+                                    Resuelto
+                                </button>
+
+                                <button type="submit"
+                                        name="marcarRechazado"
+                                        class="btn btn-sm btn-warning">
+                                    Rechazado
+                                </button>
+                            </form>
+                        </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -159,9 +201,51 @@ $totalGeneral = array_sum($totales);
                             </td>
                             <td><?php echo date('d/m/Y', strtotime($r['fecha_creacion'])); ?></td>
                             <td>
-                                <a href="verUsuarios.php?id=<?php echo $r['usuario_id']; ?>"
-                                   class="btn btn-sm btn-outline-primary">Ver usuario</a>
-                            </td>
+                            <a href="verUsuarios.php?id=<?php echo (int) $r['usuario_id']; ?>"
+                            class="btn btn-sm btn-outline-primary mb-1">
+                                Ver usuario
+                            </a>
+
+                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
+                                method="POST"
+                                class="d-inline"
+                                onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
+                                <input type="hidden" name="usuario_id" value="<?php echo (int) $r['usuario_id']; ?>">
+                                <button type="submit"
+                                        name="eliminarUsuario"
+                                        class="btn btn-sm btn-danger">
+                                    <i class="bi bi-person-x"></i> Eliminar usuario
+                                </button>
+                            </form>
+                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
+                                method="POST"
+                                class="d-inline"
+                                onsubmit="return confirm('¿Eliminar este reporte?');">
+                                <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
+                                <button type="submit"
+                                        name="eliminarReporte"
+                                        class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Quitar reporte
+                                </button>
+                            </form>
+                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
+                                method="POST"
+                                class="d-inline">
+                                <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
+
+                                <button type="submit"
+                                        name="marcarResuelto"
+                                        class="btn btn-sm btn-success">
+                                    Resuelto
+                                </button>
+
+                                <button type="submit"
+                                        name="marcarRechazado"
+                                        class="btn btn-sm btn-warning">
+                                    Rechazado
+                                </button>
+                            </form>
+                        </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

@@ -72,4 +72,46 @@ function obtenerUsuarioPorEmail($email) {
     
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+// Elimina un usuario por su ID
+function eliminarUsuarioPorId($usuario_id) {
+    global $conexion;
+
+    $sql = "DELETE FROM usuarios WHERE id = :id";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(':id', $usuario_id, PDO::PARAM_INT);
+
+    return $stmt->execute();
+}
+
+// Elimina un servicio por su ID
+function eliminarServicioPorId($servicio_id) {
+    global $conexion;
+
+    $sql = "DELETE FROM servicios WHERE id = :id";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(':id', $servicio_id, PDO::PARAM_INT);
+
+    return $stmt->execute();
+}
+// Elimina un reporte por su ID
+function eliminarReportePorId($reporte_id) {
+    global $conexion;
+
+    $sql = "DELETE FROM reportes WHERE id = :id";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(':id', $reporte_id, PDO::PARAM_INT);
+
+    return $stmt->execute();
+}
+// Cambia el estado de un reporte
+function actualizarEstadoReporte($reporte_id, $estado) {
+    global $conexion;
+
+    $sql = "UPDATE reportes SET estado = :estado WHERE id = :id";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bindParam(':estado', $estado);
+    $stmt->bindParam(':id', $reporte_id, PDO::PARAM_INT);
+
+    return $stmt->execute();
+}
 ?>

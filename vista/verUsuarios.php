@@ -35,7 +35,17 @@ if (!$usuario) {
     <a class="navbar-brand fw-bold" href="home.php">Marketplace</a>
     <a href="javascript:history.back()" class="btn btn-outline-light btn-sm">← Volver</a>
 </nav>
-
+<?php if (isset($_GET['reporte'])): ?>
+    <div class="alert <?php echo $_GET['reporte'] === 'ok' ? 'alert-success' : 'alert-danger'; ?> alert-dismissible fade show m-3" role="alert">
+        <?php echo $_GET['reporte'] === 'ok' 
+            ? '<i class="bi bi-check-circle-fill"></i> Reporte enviado correctamente.' 
+            : '<i class="bi bi-x-circle-fill"></i> El motivo no puede estar vacío.'; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <script>
+        setTimeout(() => document.querySelector('.alert')?.remove(), 3000);
+    </script>
+<?php endif; ?>
 <div id="contenido" role="main" class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -103,18 +113,12 @@ if (!$usuario) {
                 <h5 class="modal-title"><i class="bi bi-flag-fill" aria-hidden="true"></i> Reportar usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="../controladores/reportarControlador.php" method="POST">
+            <form action="../controladores/reportarController.php" method="POST">
                 <div class="modal-body" role="dialog" aria-modal="true" tabindex="-1">
                     <input type="hidden" name="tipo" value="usuario">
                     <input type="hidden" name="servicio_id" value="">
                     <input type="hidden" name="usuario_reportado_id" value="<?php echo $usuario['id']; ?>">
                     <input type="hidden" name="redirect" value="../VISTA/verUsuarios.php?id=<?php echo $usuario['id']; ?>">
-
-                    <?php if (isset($_GET['reporte'])): ?>
-                        <div class="alert <?php echo $_GET['reporte'] === 'ok' ? 'alert-success' : 'alert-danger'; ?>">
-                            <?php echo $_GET['reporte'] === 'ok' ? '<i class="bi bi-check-circle-fill" aria-hidden="true"></i> Reporte enviado.' : '<i class="bi bi-x-circle-fill" aria-hidden="true"></i> El motivo no puede estar vacío.'; ?>
-                        </div>
-                    <?php endif; ?>
 
                     <label class="form-label">Motivo del reporte</label>
                     <select name="motivo" class="form-select" required>
