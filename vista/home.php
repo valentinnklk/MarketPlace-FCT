@@ -1,4 +1,5 @@
 <?php
+session_start();
 // vista/home.php
 require_once "../conexion.php";
 require_once "../controladores/usuarioController.php";
