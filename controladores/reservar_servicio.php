@@ -46,10 +46,18 @@ if ($servicio_id <= 0 || $fecha_servicio === '') {
 }
 
 // Validar formato de fecha 'YYYY-MM-DD HH:MM:SS'
-$dt = DateTime::createFromFormat('Y-m-d H:i:s', $fecha_servicio);
-if (!$dt || $dt->format('Y-m-d H:i:s') !== $fecha_servicio) {
+$dt = DateTime::createFromFormat('Y-m-d H:i', $fecha_servicio);
+
+if (!$dt) {
+    $dt = DateTime::createFromFormat('Y-m-d H:i:s', $fecha_servicio);
+}
+
+if (!$dt) {
     redirigirError($servicio_id, 'Formato de fecha inválido.');
 }
+
+// Normalizar siempre al formato que usa la base de datos
+$fecha_servicio = $dt->format('Y-m-d H:i:s');
 
 // La fecha debe ser estrictamente futura
 if ($dt <= new DateTime('now')) {
@@ -130,7 +138,7 @@ try {
 
 } catch (PDOException $e) {
     $conexion->rollBack();
-    redirigirError($servicio_id, 'No se pudo registrar la reserva. Inténtalo de nuevo.');
+    redirigirError($servicio_id, $e->getMessage());
 }
 
 // ─────────────────────────────────────────────

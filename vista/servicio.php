@@ -235,7 +235,7 @@ if ($usuario_logueado && $servicio) {
                         <p class="text-muted small">
                             Horario disponible: de 08:00 a 20:00.
                         </p>
-                        <select id="reservaHora" class="form-select" required>
+                        <select id="reservaHora" name="hora_servicio" class="form-select" required>
                             <option value="">-- Selecciona una hora --</option>
                             <?php for ($h = 8; $h <= 20; $h++): ?>
                                 <?php $hh = sprintf('%02d:00', $h); ?>
