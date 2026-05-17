@@ -2,7 +2,7 @@
 // vista/perfilVista.php
 // Variables que vienen del PerfilController:
 // $usuario, $serviciosOfrecidos, $contratosCliente, $contratosPrestador,
-// $favoritos, $valoraciones, $valoracionMedia
+// $favoritos, $valoraciones, $valoracionMedia ...
 ?>
 <!DOCTYPE html>
 <html lang="es">
