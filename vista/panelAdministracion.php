@@ -76,14 +76,6 @@ $totalGeneral = array_sum($totales);
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-danger text-center">
-                <div class="card-body">
-                    <h2><?php echo $totales['rechazado']; ?></h2>
-                    <p class="mb-0" style="color: black">Rechazados</p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <h4 class="mb-3"><i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i> Servicios denunciados</h4>
