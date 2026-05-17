@@ -4,7 +4,7 @@
 Variante construida desde cero sobre el proyecto MarketPlace-FCT
 original, aplicando la paleta de colores y la estética del mockup
 de referencia (estilo dashboard SaaS limpio y profesional).
-
+...................
 ---
 
 ## Paleta oficial (60/20/10/10)
