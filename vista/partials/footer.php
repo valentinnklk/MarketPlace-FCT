@@ -57,7 +57,6 @@ $_haySesion = !empty($nombreUsuario) || !empty($_SESSION['usuario_id']);
 
         <div class="footer-bottom">
             <p>&copy; <?php echo date('Y'); ?> Marketplace. Todos los derechos reservados.</p>
-            <p class="footer-disclaimer">Proyecto desarrollado con fines académicos.</p>
         </div>
     </div>
 </footer>
