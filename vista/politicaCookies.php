@@ -1,6 +1,6 @@
 <?php
 session_start();
-$nombreUsuario = $_SESSION['nombre'] ?? null;
+$nombreUsuario = $_SESSION['usuario_nombre'] ?? $_SESSION['nombre'] ?? null;
 $rolUsuario = $_SESSION['rol'] ?? null;
 ?>
 <!DOCTYPE html>
@@ -76,18 +76,7 @@ $rolUsuario = $_SESSION['rol'] ?? null;
         </div>
 
         <h2>4. ¿Cómo gestionar las cookies?</h2>
-        <p>El usuario puede gestionar las cookies a través de dos vías:</p>
-
-        <h3>4.1. Mediante el panel de configuración del sitio web</h3>
-        <p>El usuario puede acceder en cualquier momento al panel de configuración de cookies del sitio web haciendo clic en el botón inferior. Desde dicho panel podrá aceptar todas las cookies, rechazar las no necesarias o configurar individualmente cada categoría.</p>
-        <p>
-            <button type="button" class="btn btn-primary" onclick="if(window.MarketplaceCookies){window.MarketplaceCookies.show();}">
-                <i class="bi bi-gear-fill" aria-hidden="true"></i> Abrir configuración de cookies
-            </button>
-        </p>
-
-        <h3>4.2. Mediante la configuración del navegador</h3>
-        <p>El usuario puede configurar su navegador para aceptar, rechazar, suprimir o ser advertido sobre la instalación de cookies. La forma de hacerlo varía en función del navegador utilizado. A continuación se ofrecen los enlaces a las páginas oficiales de los principales navegadores:</p>
+        <p>Dado que únicamente se utilizan cookies estrictamente necesarias, no se ofrece un panel de configuración granular. No obstante, el usuario puede gestionarlas en cualquier momento desde la configuración de su navegador. La forma de hacerlo varía en función del navegador utilizado; a continuación se enlazan las páginas oficiales de los principales navegadores:</p>
         <ul>
             <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer">Google Chrome</a></li>
             <li><a href="https://support.mozilla.org/es/kb/proteccion-antirrastreo-mejorada-firefox-escritorio" target="_blank" rel="noopener noreferrer">Mozilla Firefox</a></li>

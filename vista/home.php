@@ -9,6 +9,29 @@ require_once "../modelo/chatModelo.php"; // Necesario para el contador de mensaj
 $servicioController = new ServicioController($conexion);
 $servicios = $servicioController->buscar($_GET['buscar'] ?? '');
 
+// Cargar la imagen portada (primera por orden) de TODOS los servicios mostrados
+// en una sola query, para evitar N+1.
+$portadas = [];
+if (!empty($servicios)) {
+    $ids = array_map(fn($s) => (int) $s['id'], $servicios);
+    $marcadores = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $conexion->prepare(
+        "SELECT si.servicio_id, si.url_publica
+         FROM servicio_imagenes si
+         INNER JOIN (
+             SELECT servicio_id, MIN(orden) AS min_orden
+             FROM servicio_imagenes
+             WHERE servicio_id IN ($marcadores)
+             GROUP BY servicio_id
+         ) primera ON primera.servicio_id = si.servicio_id
+                  AND primera.min_orden  = si.orden"
+    );
+    $stmt->execute($ids);
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $portadas[(int) $row['servicio_id']] = $row['url_publica'];
+    }
+}
+
 // Lógica para el contador de mensajes no leídos
 $chatModelo = new ChatModelo($conexion);
 $usuario_id = $_SESSION['usuario_id'] ?? null;
@@ -95,7 +118,18 @@ if ($usuario_id) {
     <div class="row">
         <?php foreach ($servicios as $servicio): ?>
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm h-100">
+                <div class="card shadow-sm h-100 servicio-card">
+                    <a href="servicio.php?id=<?php echo (int) $servicio['id']; ?>" class="text-decoration-none">
+                        <?php if (!empty($portadas[(int) $servicio['id']])): ?>
+                            <img src="<?php echo htmlspecialchars($portadas[(int) $servicio['id']]); ?>"
+                                 alt="<?php echo htmlspecialchars($servicio['titulo']); ?>"
+                                 class="servicio-portada">
+                        <?php else: ?>
+                            <div class="servicio-portada-placeholder">
+                                <i class="bi bi-image" aria-hidden="true"></i>
+                            </div>
+                        <?php endif; ?>
+                    </a>
                     <div class="card-body">
                         <h5 class="card-title">
                             <a href="servicio.php?id=<?php echo $servicio['id']; ?>" class="text-decoration-none">
@@ -129,10 +163,6 @@ if ($usuario_id) {
             </div>
         <?php endforeach; ?>
     </div>
-</div>
-
-<div class="container text-center py-4">
-    <a href="../controladores/logout.php" class="btn btn-link text-danger">Cerrar sesión</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

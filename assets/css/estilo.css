@@ -1292,132 +1292,6 @@ h1.text-center::after {
     .cookies-banner-actions { justify-content: center; }
 }
 
-/* ============================================================
-   ✦ MODAL DE CONFIGURACIÓN DE COOKIES ✦
-   ============================================================ */
-#cookies-modal .modal-title {
-    display: inline-flex;
-    align-items: center;
-    gap: .55rem;
-    color: var(--sa-ink) !important;
-}
-#cookies-modal .modal-title .bi { color: var(--sa-blue); }
-
-.cookies-modal-intro {
-    color: var(--sa-grey-text);
-    font-size: .9rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.55;
-}
-
-.cookies-cat {
-    border: 1px solid var(--sa-grey-line);
-    border-radius: 12px;
-    padding: 1.15rem 1.25rem;
-    margin-bottom: 1rem;
-    background: var(--sa-white);
-    transition: border-color .15s;
-}
-.cookies-cat:hover { border-color: var(--sa-blue-soft); }
-.cookies-cat-inactive { opacity: .75; }
-.cookies-cat-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: .55rem;
-    gap: 1rem;
-}
-.cookies-cat strong {
-    color: var(--sa-ink);
-    font-size: .98rem;
-    font-weight: 700;
-    display: block;
-    margin-bottom: .25rem;
-}
-.cookies-cat-badge {
-    display: inline-block;
-    font-size: .68rem;
-    font-weight: 600;
-    padding: .15em .55em;
-    border-radius: 4px;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-}
-.cookies-cat-required {
-    background: var(--sa-blue-soft);
-    color: var(--sa-blue-hover);
-    border: 1px solid rgba(37, 99, 235, 0.18);
-}
-.cookies-cat-disabled {
-    background: var(--sa-grey);
-    color: var(--sa-grey-text);
-    border: 1px solid var(--sa-grey-line);
-}
-.cookies-cat-desc {
-    color: var(--sa-grey-text);
-    font-size: .88rem;
-    line-height: 1.5;
-    margin: 0;
-}
-.cookies-modal-foot {
-    margin-top: 1.25rem;
-    margin-bottom: 0;
-    padding-top: 1rem;
-    border-top: 1px solid var(--sa-grey-line);
-    font-size: .82rem;
-    color: var(--sa-grey-text);
-    display: flex;
-    align-items: center;
-    gap: .35rem;
-}
-.cookies-modal-foot .bi { color: var(--sa-blue); }
-
-/* Switch personalizado */
-.cookies-switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-    flex-shrink: 0;
-}
-.cookies-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-.cookies-slider {
-    position: absolute;
-    cursor: pointer;
-    inset: 0;
-    background: var(--sa-grey-line-2);
-    border-radius: 24px;
-    transition: background .2s;
-}
-.cookies-slider::before {
-    content: "";
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    left: 3px;
-    bottom: 3px;
-    background: var(--sa-white);
-    border-radius: 50%;
-    transition: transform .2s;
-    box-shadow: 0 1px 2px rgba(17, 24, 39, 0.2);
-}
-.cookies-switch input:checked + .cookies-slider {
-    background: var(--sa-blue);
-}
-.cookies-switch input:checked + .cookies-slider::before {
-    transform: translateX(20px);
-}
-.cookies-switch input:disabled + .cookies-slider {
-    cursor: not-allowed;
-    opacity: .65;
-}
-.cookies-switch input:focus-visible + .cookies-slider {
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
-}
 
 /* ============================================================
    ✦ DOCUMENTOS LEGALES ✦
@@ -1609,4 +1483,115 @@ body > main { flex: 1 0 auto; }
 .legal-consent-note a {
     color: var(--sa-blue);
     text-decoration: underline;
+}
+
+/* ============================================================
+   ✦ GALERÍA DE IMÁGENES DE UN SERVICIO ✦
+   ============================================================ */
+.servicio-galeria-miniaturas {
+    display: flex;
+    gap: .55rem;
+    padding: .65rem .85rem;
+    background: var(--sa-grey);
+    border-top: 1px solid var(--sa-grey-line);
+}
+.servicio-miniatura {
+    border: 2px solid transparent;
+    background: var(--sa-white);
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color .15s, transform .15s;
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+}
+.servicio-miniatura:hover {
+    transform: translateY(-2px);
+    border-color: rgba(37, 99, 235, 0.4);
+}
+.servicio-miniatura.activa {
+    border-color: var(--sa-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.servicio-miniatura img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ============================================================
+   ✦ VISTA PREVIA DE IMÁGENES (subir servicio) ✦
+   ============================================================ */
+.preview-img-box {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--sa-grey-line);
+    background: var(--sa-grey);
+    box-shadow: var(--sa-shadow-sm);
+}
+.preview-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.preview-img-name {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(17, 24, 39, 0.7);
+    color: var(--sa-white);
+    font-size: .68rem;
+    padding: .25rem .35rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ============================================================
+   ✦ TARJETA DE SERVICIO EN HOME — soporte de imagen portada ✦
+   ============================================================ */
+.servicio-portada {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: var(--sa-radius-lg) var(--sa-radius-lg) 0 0;
+    background: var(--sa-grey);
+    display: block;
+}
+.servicio-portada-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, var(--sa-blue-soft) 0%, var(--sa-blue-softer) 100%);
+    border-radius: var(--sa-radius-lg) var(--sa-radius-lg) 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sa-blue);
+    font-size: 2.5rem;
+}
+.card .servicio-portada,
+.card .servicio-portada-placeholder {
+    border-radius: var(--sa-radius-lg) var(--sa-radius-lg) 0 0;
+}
+
+/* Aviso de cookies en el footer (sustituye al botón) */
+.footer-aviso-cookies {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: .82rem;
+    line-height: 1.45;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: .4rem;
+}
+.footer-aviso-cookies .bi {
+    color: var(--sa-blue);
+    margin-top: 2px;
+    flex-shrink: 0;
 }

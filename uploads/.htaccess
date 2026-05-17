@@ -1,0 +1,14 @@
+# Seguridad: la carpeta /uploads contiene archivos subidos por usuarios.
+# Bloqueamos la ejecución de cualquier PHP que pudiera haberse colado.
+<FilesMatch "\.(php|phtml|phar|pl|py|jsp|asp|sh|cgi)$">
+    Require all denied
+</FilesMatch>
+
+# Forzamos que las imágenes se sirvan con su mime correcto
+<IfModule mod_mime.c>
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png  .png
+    AddType image/webp .webp
+</IfModule>
+
+Options -Indexes

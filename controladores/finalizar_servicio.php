@@ -12,7 +12,7 @@
 //   - Tras la actualización, si AMBAS confirmaciones están a 1:
 //       a) estado = 'completado', fecha_actualizacion = NOW()
 //       b) Notificación al cliente con tipo='servicio_finalizado'
-//          y marcador #contrato:[id] para enlazar a reseñaVista.php
+//          y marcador #contrato:[id] para enlazar a resenaVista.php
 
 session_start();
 require_once __DIR__ . '/../conexion.php';

@@ -1,9 +1,18 @@
 <?php
 /* Partial: footer corporativo con enlaces legales.
-   Defensivo ante vistas que no hayan iniciado sesión todavía. */
+   Detecta automáticamente si hay sesión iniciada comprobando las claves de
+   sesión que el proyecto usa actualmente (`usuario_id` + `usuario_nombre`),
+   y mantiene compatibilidad con vistas que ya definan $nombreUsuario. */
 if (!isset($nombreUsuario)) {
-    $nombreUsuario = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : null;
+    if (isset($_SESSION['usuario_nombre'])) {
+        $nombreUsuario = $_SESSION['usuario_nombre'];
+    } elseif (isset($_SESSION['nombre'])) {
+        $nombreUsuario = $_SESSION['nombre'];
+    } else {
+        $nombreUsuario = null;
+    }
 }
+$_haySesion = !empty($nombreUsuario) || !empty($_SESSION['usuario_id']);
 ?>
 <footer class="site-footer" role="contentinfo">
     <div class="container">
@@ -27,7 +36,7 @@ if (!isset($nombreUsuario)) {
                 <h5>Plataforma</h5>
                 <ul>
                     <li><a href="home.php"><i class="bi bi-house-door-fill" aria-hidden="true"></i> Inicio</a></li>
-                    <?php if (!empty($nombreUsuario)): ?>
+                    <?php if ($_haySesion): ?>
                         <li><a href="perfilVista.php"><i class="bi bi-person-fill" aria-hidden="true"></i> Mi perfil</a></li>
                         <li><a href="subirServicioVista.php"><i class="bi bi-plus-circle-fill" aria-hidden="true"></i> Ofrecer servicio</a></li>
                     <?php else: ?>
@@ -38,10 +47,11 @@ if (!isset($nombreUsuario)) {
             </nav>
 
             <div class="footer-meta">
-                <h5>Configuración</h5>
-                <button type="button" class="btn btn-outline-light btn-sm footer-cookies-btn" onclick="if(window.MarketplaceCookies){window.MarketplaceCookies.show();}">
-                    <i class="bi bi-gear-fill" aria-hidden="true"></i> Configurar cookies
-                </button>
+                <h5>Aviso</h5>
+                <p class="footer-aviso-cookies">
+                    <i class="bi bi-cookie" aria-hidden="true"></i>
+                    Solo se utilizan cookies estrictamente necesarias para el funcionamiento del sitio.
+                </p>
             </div>
         </div>
 

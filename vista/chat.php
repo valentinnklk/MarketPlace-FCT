@@ -324,7 +324,7 @@ $usuario_id  = $data['usuario_id'];
                     <?php else: ?>
                         <div class="d-flex gap-2 align-items-center">
                             <small class="me-auto">El servicio está completado. ¡Comparte tu experiencia!</small>
-                            <a href="reseñaVista.php?contrato_id=<?php echo (int) $contrato_chat['id']; ?>"
+                            <a href="resenaVista.php?contrato_id=<?php echo (int) $contrato_chat['id']; ?>"
                                class="btn btn-warning btn-sm">⭐ Dejar valoración</a>
                         </div>
                     <?php endif; ?>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-$nombreUsuario = $_SESSION['nombre'] ?? null;
+$nombreUsuario = $_SESSION['usuario_nombre'] ?? $_SESSION['nombre'] ?? null;
 $rolUsuario = $_SESSION['rol'] ?? null;
 ?>
 <!DOCTYPE html>
@@ -132,7 +132,14 @@ $rolUsuario = $_SESSION['rol'] ?? null;
         </ul>
 
         <h2>9. Menores de edad</h2>
-        <p>La plataforma está dirigida exclusivamente a personas mayores de 18 años. No se recogen datos de menores de edad. En caso de detectarse el registro de una persona menor, se procederá a la eliminación inmediata de su cuenta y de los datos asociados.</p>
+        <p>El tratamiento de los datos personales de menores se rige por el artículo 8 del Reglamento General de Protección de Datos y por el artículo 7 de la Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), conforme a los siguientes términos:</p>
+        <ul>
+            <li><strong>Mayores de 14 años</strong> pueden prestar válidamente su consentimiento para el tratamiento de sus datos en el marco del registro como cliente.</li>
+            <li>El registro como <strong>prestador de servicios</strong> está reservado a usuarios <strong>mayores de 18 años</strong> con plena capacidad de obrar y, excepcionalmente, a menores entre <strong>16 y 17 años</strong> que cuenten con el consentimiento expreso por escrito de quienes ostenten su patria potestad o tutela.</li>
+            <li>Para los menores de 16 a 17 años que actúen como prestadores, se solicitará adicionalmente el DNI del titular de la patria potestad y se conservará el documento acreditativo del consentimiento durante el tiempo que el menor mantenga la condición de prestador, así como por los plazos legales aplicables.</li>
+            <li>El registro de <strong>menores de 14 años</strong> está prohibido. En caso de detectarse, se procederá a la eliminación inmediata de la cuenta y de todos los datos asociados.</li>
+        </ul>
+        <p>El Responsable del Tratamiento adoptará las medidas razonables para verificar la autenticidad del consentimiento prestado por quien ostente la patria potestad o tutela, pudiendo requerir documentación adicional cuando existan indicios fundados de que dicho consentimiento es ficticio o irregular.</p>
 
         <h2>10. Modificaciones de la Política de Privacidad</h2>
         <p>El Responsable del Tratamiento se reserva el derecho a modificar la presente Política de Privacidad para adaptarla a novedades legislativas o jurisprudenciales. En tales supuestos, se anunciará en el sitio web los cambios introducidos con razonable antelación a su puesta en práctica.</p>

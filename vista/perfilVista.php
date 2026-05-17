@@ -48,29 +48,36 @@
     <!-- CABECERA -->
     <div class="card mb-4">
         <div class="card-body">
-            <div class="d-flex align-items-center gap-3 mb-3">
-                <div class="avatar-circulo">
-                    <?php echo strtoupper(substr($usuario['nombre'], 0, 2)); ?>
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-3 flex-wrap">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar-circulo">
+                        <?php echo strtoupper(substr($usuario['nombre'], 0, 2)); ?>
+                    </div>
+                    <div>
+                        <h4 class="mb-0"><?php echo htmlspecialchars($usuario['nombre']); ?></h4>
+                        <small class="text-muted">
+                            <?php echo htmlspecialchars($usuario['ubicacion'] ?? ''); ?>
+                            &nbsp;·&nbsp;
+                            Miembro desde <?php echo date('d/m/Y', strtotime($usuario['fecha_registro'])); ?>
+                        </small>
+                        <?php if ($usuario['es_administrador']): ?>
+                            <span class="badge bg-danger ms-2">Admin</span>
+                        <?php endif; ?>
+                        <?php if ($valoracionMedia['total'] > 0): ?>
+                            <div class="mt-1">
+                                <span class="estrellas"><?php echo str_repeat('<i class="bi bi-star-fill" aria-hidden="true"></i>', round($valoracionMedia['media'])) . str_repeat('<i class="bi bi-star" aria-hidden="true"></i>', 5 - round($valoracionMedia['media'])); ?></span>
+                                <small class="text-muted ms-1">
+                                    <?php echo number_format($valoracionMedia['media'], 1); ?> · <?php echo $valoracionMedia['total']; ?> valoracion<?php echo $valoracionMedia['total'] !== 1 ? 'es' : ''; ?>
+                                </small>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="mb-0"><?php echo htmlspecialchars($usuario['nombre']); ?></h4>
-                    <small class="text-muted">
-                        <?php echo htmlspecialchars($usuario['ubicacion'] ?? ''); ?>
-                        &nbsp;·&nbsp;
-                        Miembro desde <?php echo date('d/m/Y', strtotime($usuario['fecha_registro'])); ?>
-                    </small>
-                    <?php if ($usuario['es_administrador']): ?>
-                        <span class="badge bg-danger ms-2">Admin</span>
-                    <?php endif; ?>
-                    <?php if ($valoracionMedia['total'] > 0): ?>
-                        <div class="mt-1">
-                            <span class="estrellas"><?php echo str_repeat('<i class="bi bi-star-fill" aria-hidden="true"></i>', round($valoracionMedia['media'])) . str_repeat('<i class="bi bi-star" aria-hidden="true"></i>', 5 - round($valoracionMedia['media'])); ?></span>
-                            <small class="text-muted ms-1">
-                                <?php echo number_format($valoracionMedia['media'], 1); ?> · <?php echo $valoracionMedia['total']; ?> valoracion<?php echo $valoracionMedia['total'] !== 1 ? 'es' : ''; ?>
-                            </small>
-                        </div>
-                    <?php endif; ?>
-                </div>
+
+                <!-- Botón cerrar sesión (arriba a la derecha de la cabecera del perfil) -->
+                <a href="../controladores/logout.php" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Cerrar sesión
+                </a>
             </div>
 
             <!-- ESTADÍSTICAS -->
@@ -235,7 +242,7 @@
                                     <?php if (!empty($c['reseña_id'])): ?>
                                         <span class="badge bg-success mt-1 d-inline-block"><i class="bi bi-check" aria-hidden="true"></i> Valorado</span>
                                     <?php else: ?>
-                                        <a href="reseñaVista.php?contrato_id=<?php echo (int) $c['id']; ?>"
+                                        <a href="resenaVista.php?contrato_id=<?php echo (int) $c['id']; ?>"
                                            class="btn btn-warning btn-sm mt-1">⭐ Valorar</a>
                                     <?php endif; ?>
                                 <?php endif; ?>
@@ -468,7 +475,7 @@
                                 </div>
                             <?php elseif ($n['tipo'] === 'servicio_finalizado' && $contrato_id_notif): ?>
                                 <div class="mt-2">
-                                    <a href="reseñaVista.php?contrato_id=<?php echo $contrato_id_notif; ?>"
+                                    <a href="resenaVista.php?contrato_id=<?php echo $contrato_id_notif; ?>"
                                        class="btn btn-warning btn-sm">⭐ Dejar valoración</a>
                                 </div>
                             <?php endif; ?>

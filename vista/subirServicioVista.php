@@ -44,7 +44,7 @@
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="subirServicio.php?accion=guardar">
+    <form method="POST" action="subirServicio.php?accion=guardar" enctype="multipart/form-data" id="formSubirServicio">
 
         <!-- DESCRIPCIÓN -->
         <div class="card mb-3">
@@ -160,6 +160,29 @@
             </div>
         </div>
 
+        <!-- IMÁGENES -->
+        <div class="card mb-4">
+            <div class="card-header fw-bold">
+                <i class="bi bi-images" aria-hidden="true"></i> Imágenes del servicio
+            </div>
+            <div class="card-body">
+                <label class="form-label fw-semibold" for="inputImagenes">
+                    Sube hasta 3 imágenes (opcional)
+                </label>
+                <input type="file" id="inputImagenes" name="imagenes[]" class="form-control"
+                       accept="image/jpeg,image/png,image/webp"
+                       multiple>
+                <div class="form-text">
+                    Formatos admitidos: JPG, PNG o WebP. Tamaño máximo: 2 MB por imagen.
+                    La primera imagen se utilizará como portada del servicio.
+                </div>
+
+                <!-- Vista previa -->
+                <div id="previewImagenes" class="d-flex gap-2 flex-wrap mt-3"></div>
+                <div id="errorImagenes" class="text-danger small mt-2"></div>
+            </div>
+        </div>
+
         <!-- BOTONES -->
         <div class="d-flex gap-2 mb-5">
             <button type="submit" class="btn btn-success flex-fill"><i class="bi bi-rocket-takeoff-fill" aria-hidden="true"></i> Publicar servicio</button>
@@ -171,6 +194,65 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* ============================================================
+   Vista previa y validación de imágenes (máx 3, máx 2 MB c/u)
+   ============================================================ */
+(function () {
+    var input   = document.getElementById('inputImagenes');
+    var preview = document.getElementById('previewImagenes');
+    var errBox  = document.getElementById('errorImagenes');
+    var form    = document.getElementById('formSubirServicio');
+
+    var MAX_FILES = 3;
+    var MAX_SIZE  = 2 * 1024 * 1024;
+    var MIMES     = ['image/jpeg', 'image/png', 'image/webp'];
+
+    if (!input) return;
+
+    input.addEventListener('change', function () {
+        preview.innerHTML = '';
+        errBox.textContent = '';
+
+        var files = Array.from(input.files);
+
+        if (files.length > MAX_FILES) {
+            errBox.textContent = 'Solo puedes subir como máximo ' + MAX_FILES + ' imágenes.';
+            input.value = '';
+            return;
+        }
+
+        for (var i = 0; i < files.length; i++) {
+            var f = files[i];
+            if (MIMES.indexOf(f.type) === -1) {
+                errBox.textContent = 'Formato no admitido: ' + f.name;
+                input.value = ''; preview.innerHTML = '';
+                return;
+            }
+            if (f.size > MAX_SIZE) {
+                errBox.textContent = 'La imagen "' + f.name + '" supera 2 MB.';
+                input.value = ''; preview.innerHTML = '';
+                return;
+            }
+
+            // Vista previa
+            var reader = new FileReader();
+            (function (file) {
+                reader.onload = function (e) {
+                    var box = document.createElement('div');
+                    box.className = 'preview-img-box';
+                    box.innerHTML =
+                        '<img src="' + e.target.result + '" alt="Vista previa">' +
+                        '<span class="preview-img-name">' + file.name + '</span>';
+                    preview.appendChild(box);
+                };
+            })(f);
+            reader.readAsDataURL(f);
+        }
+    });
+})();
+</script>
 
 <?php include 'partials/footer.php'; ?>
 <?php include 'partials/cookies-banner.php'; ?>

@@ -2,13 +2,18 @@
 // controladores/subirServicioController.php
 
 require_once __DIR__ . '/../modelo/servicioModelo.php';
+require_once __DIR__ . '/../modelo/imagenServicioModelo.php';
 
 class SubirServicioController {
 
     private ServicioModelo $modelo;
+    private ImagenServicioModelo $imagenes;
+    private PDO $conexion;
 
     public function __construct(PDO $conexion) {
-        $this->modelo = new ServicioModelo($conexion);
+        $this->conexion = $conexion;
+        $this->modelo   = new ServicioModelo($conexion);
+        $this->imagenes = new ImagenServicioModelo($conexion);
     }
 
     // Muestra el formulario vacío con categorías
@@ -40,9 +45,21 @@ class SubirServicioController {
             'ubicacion'         => trim($_POST['ubicacion']),
         ];
 
-        $this->modelo->guardarServicio($datos);
+        $servicio_id = $this->modelo->guardarServicio($datos);
 
-        header('Location: perfil.php');
+        // Procesar imágenes (máximo 3) si se han subido
+        if (!empty($_FILES['imagenes']['name'][0])) {
+            $erroresImg = $this->imagenes->procesarImagenes($servicio_id, $_FILES);
+            if (!empty($erroresImg)) {
+                // El servicio sí se creó, pero hubo problemas con alguna imagen.
+                // Lo informamos en la siguiente página vía query string.
+                $msg = urlencode(implode(' | ', $erroresImg));
+                header('Location: servicio.php?id=' . $servicio_id . '&img_warn=' . $msg);
+                exit;
+            }
+        }
+
+        header('Location: servicio.php?id=' . $servicio_id . '&creado=ok');
         exit;
     }
 

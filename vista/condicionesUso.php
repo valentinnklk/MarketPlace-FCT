@@ -1,6 +1,6 @@
 <?php
 session_start();
-$nombreUsuario = $_SESSION['nombre'] ?? null;
+$nombreUsuario = $_SESSION['usuario_nombre'] ?? $_SESSION['nombre'] ?? null;
 $rolUsuario = $_SESSION['rol'] ?? null;
 ?>
 <!DOCTYPE html>
@@ -39,11 +39,24 @@ $rolUsuario = $_SESSION['rol'] ?? null;
         <p>En el momento del registro, el usuario deberá marcar la casilla de aceptación expresa de las presentes Condiciones. Sin dicha aceptación no será posible completar el alta en la plataforma.</p>
 
         <h2>3. Capacidad y edad mínima</h2>
-        <p>Para registrarse y utilizar la plataforma, el usuario declara y garantiza que:</p>
+        <p>Para registrarse y utilizar la plataforma, el usuario debe cumplir uno de los siguientes supuestos:</p>
+        <ol>
+            <li><strong>Mayores de 18 años con plena capacidad jurídica de obrar.</strong> En este caso, el usuario podrá registrarse y utilizar la plataforma tanto en calidad de cliente como de prestador sin requisitos adicionales.</li>
+            <li><strong>Menores de edad mayores de 16 años,</strong> que deberán contar con el <strong>consentimiento expreso, previo y por escrito</strong> de quienes ostenten su patria potestad o tutela. Este consentimiento, conforme al artículo 7 de la Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), es requisito imprescindible para que el menor pueda:
+                <ul>
+                    <li>Crear una cuenta en la plataforma.</li>
+                    <li>Publicar y prestar servicios como prestador.</li>
+                    <li>Contratar servicios como cliente.</li>
+                </ul>
+                Además, el menor deberá facilitar el número de su Documento Nacional de Identidad y el de quien autorice su uso de la plataforma.
+            </li>
+        </ol>
+        <p>El registro de menores de 16 años no está permitido en ningún caso. En el supuesto de detectarse el registro de una persona menor de 16 años, se procederá a la eliminación inmediata de su cuenta y de los datos asociados.</p>
+        <p>El usuario declara y garantiza expresamente que:</p>
         <ul>
-            <li>Es mayor de 18 años.</li>
-            <li>Tiene plena capacidad jurídica de obrar.</li>
-            <li>Actúa por sí mismo y bajo su exclusiva responsabilidad.</li>
+            <li>Cumple con el requisito de edad establecido.</li>
+            <li>Si es menor entre 16 y 17 años, cuenta con la autorización mencionada y puede acreditarla a requerimiento del Titular.</li>
+            <li>Actúa por sí mismo y bajo su exclusiva responsabilidad (o, en su caso, bajo la responsabilidad de quien ostente su patria potestad).</li>
             <li>Los datos facilitados son veraces, exactos y completos.</li>
         </ul>
 
@@ -52,6 +65,7 @@ $rolUsuario = $_SESSION['rol'] ?? null;
         <ul>
             <li>Para usuarios cliente: nombre, apellidos, correo electrónico y contraseña.</li>
             <li>Para usuarios prestador: adicionalmente, número de Documento Nacional de Identidad (DNI) a efectos de verificación de identidad.</li>
+            <li>Para usuarios menores de edad entre 16 y 17 años: deberán aportar adicionalmente el consentimiento expreso por escrito de quienes ostenten su patria potestad o tutela, así como el DNI de la persona autorizante.</li>
         </ul>
         <p>El usuario es el único responsable de la veracidad de los datos facilitados, así como de mantener la confidencialidad de su contraseña. El Titular no se responsabiliza del uso indebido que terceros pudieran realizar de las credenciales del usuario.</p>
 

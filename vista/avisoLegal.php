@@ -1,6 +1,6 @@
 <?php
 session_start();
-$nombreUsuario = $_SESSION['nombre'] ?? null;
+$nombreUsuario = $_SESSION['usuario_nombre'] ?? $_SESSION['nombre'] ?? null;
 $rolUsuario = $_SESSION['rol'] ?? null;
 ?>
 <!DOCTYPE html>
@@ -45,7 +45,7 @@ $rolUsuario = $_SESSION['rol'] ?? null;
 
         <h2>3. Aceptación del usuario</h2>
         <p>El acceso, la navegación y la utilización del sitio web atribuyen la condición de usuario, que acepta, desde el momento mismo del acceso, todas las condiciones aquí establecidas, así como las modificaciones que el titular pueda introducir.</p>
-        <p>Si el usuario no estuviera de acuerdo con las condiciones expuestas, deberá abstenerse de utilizar el sitio web.</p>
+        <p>Si el usuario no estuviera de acuerdo con las condiciones expuestas, deberá abstenerse de utilizar el sitio web. Los menores de edad entre 16 y 17 años podrán hacer uso de la plataforma siempre que cuenten con el consentimiento expreso de quienes ostenten su patria potestad o tutela, en los términos previstos en las Condiciones de Uso y en la Política de Privacidad.</p>
 
         <h2>4. Propiedad intelectual e industrial</h2>
         <p>Todos los contenidos del sitio web (textos, fotografías, gráficos, imágenes, iconos, tecnología, software, así como su diseño gráfico y códigos fuente) son propiedad intelectual del titular o de terceros que han autorizado su uso, sin que pueda entenderse que se cede al usuario ninguno de los derechos de explotación reconocidos por la normativa vigente sobre propiedad intelectual.</p>

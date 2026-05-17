@@ -50,12 +50,9 @@ $totalGeneral = array_sum($totales);
         </div>
     <?php endif; ?>
 
-    <h4 class="mb-3">
-    <i class="bi bi-bar-chart-fill" aria-hidden="true"></i> Estadísticas de reportes
-    </h4>
-
-    <div class="row mb-3">
-        <div class="col-md-4">
+    <h4 class="mb-3"><i class="bi bi-bar-chart-fill" aria-hidden="true"></i> Estadísticas de reportes</h4>
+    <div class="row mb-4">
+        <div class="col-md-3">
             <div class="card text-white bg-secondary text-center">
                 <div class="card-body">
                     <h2><?php echo $totalGeneral; ?></h2>
@@ -63,8 +60,7 @@ $totalGeneral = array_sum($totales);
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-warning text-center">
                 <div class="card-body">
                     <h2><?php echo $totales['pendiente']; ?></h2>
@@ -72,12 +68,19 @@ $totalGeneral = array_sum($totales);
                 </div>
             </div>
         </div>
-
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card text-white bg-success text-center">
                 <div class="card-body">
                     <h2><?php echo $totales['resuelto']; ?></h2>
                     <p class="mb-0" style="color: black">Resueltos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger text-center">
+                <div class="card-body">
+                    <h2><?php echo $totales['rechazado']; ?></h2>
+                    <p class="mb-0" style="color: black">Rechazados</p>
                 </div>
             </div>
         </div>
@@ -131,21 +134,10 @@ $totalGeneral = array_sum($totales);
                                 </button>
                             </form>
                             <form action="../CONTROLADORES/panelAdministracionControlador.php"
-                                method="POST"
-                                class="d-inline"
-                                onsubmit="return confirm('¿Eliminar este reporte?');">
-                                <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
-                                <button type="submit"
-                                        name="eliminarReporte"
-                                        class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-x-circle"></i> Quitar reporte
-                                </button>
-                            </form>
-                            <form action="../CONTROLADORES/panelAdministracionControlador.php"
                             method="POST"
                             class="d-inline">
                             <input type="hidden" name="reporte_id" value="<?php echo (int) $r['id']; ?>">
-                            
+
                             <button type="submit"
                                     name="cambiarEstadoReporte"
                                     class="btn btn-sm <?php echo $r['estado'] === 'pendiente' ? 'btn-success' : 'btn-warning'; ?>">

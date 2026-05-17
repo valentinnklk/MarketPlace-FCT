@@ -44,34 +44,230 @@ if ($usuario_logueado && $servicio) {
         .servicio-imagen { object-fit: cover; height: 300px; width: 100%; }
         .precio { font-size: 1.8rem; font-weight: bold; color: #28a745; }
         .badge-estado { font-size: 0.9rem; }
-        .btn-accion { flex: 1; }
-
-        /* Pasos del modal de reserva */
-        .paso-reserva { display: none; }
-        .paso-reserva.activo { display: block; }
-        .paso-indicador {
-            display: flex;
+        /* Botones de acción del servicio: grid uniforme, alturas iguales */
+        .acciones-servicio {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: .65rem;
+            align-items: stretch;
+        }
+        .acciones-servicio > form {
+            margin: 0;
+            display: flex;     /* el form se estira a toda la celda */
+        }
+        .acciones-servicio > form > .btn,
+        .acciones-servicio > .btn {
+            width: 100%;
+            min-height: 46px;
+            margin: 0;          /* sin margen heredado de Bootstrap */
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: .45rem;
+            white-space: nowrap;
         }
-        .paso-indicador .punto {
-            width: 30px; height: 30px; border-radius: 50%;
-            background: #e9ecef; color: #6c757d;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 0.9rem;
+        .acciones-servicio > form > .btn {
+            flex: 1;            /* el botón ocupa toda la altura/ancho del form */
         }
-        .paso-indicador .punto.activo { background: #0d6efd; color: #fff; }
-        .paso-indicador .punto.completado { background: #28a745; color: #fff; }
 
-        .resumen-fila {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #eee;
+        /* === Sección de valoraciones === */
+        .valoraciones-servicio {
+            border: 1px solid #E5E7EB;
+            border-radius: 14px;
         }
-        .resumen-fila:last-child { border-bottom: none; }
-        .resumen-fila .clave { font-weight: 600; color: #495057; }
+        .valoraciones-cabecera {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .valoraciones-cabecera h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #111827;
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+        }
+        .valoraciones-cabecera h3 .bi { color: #F59E0B; }
+
+        .valoraciones-resumen {
+            display: inline-flex;
+            align-items: center;
+            gap: .65rem;
+            background: #FFFBEB;
+            border: 1px solid #FCD34D;
+            border-radius: 999px;
+            padding: .4rem 1rem;
+        }
+        .valoraciones-media {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #92400E;
+            font-family: 'IBM Plex Mono', monospace;
+            line-height: 1;
+        }
+        .valoraciones-estrellas {
+            color: #F59E0B;
+            font-size: .9rem;
+        }
+        .valoraciones-total {
+            font-size: .82rem;
+            color: #6B7280;
+        }
+
+        .valoraciones-vacio {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #6B7280;
+        }
+        .valoraciones-vacio .bi {
+            font-size: 2.5rem;
+            color: #D1D5DB;
+            display: block;
+            margin-bottom: .5rem;
+        }
+        .valoraciones-vacio p {
+            margin: 0;
+            font-size: .92rem;
+        }
+
+        .valoraciones-lista {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .valoracion-item {
+            display: flex;
+            gap: 1rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid #F2F4F7;
+        }
+        .valoracion-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .valoracion-avatar {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            color: #fff;
+            font-weight: 700;
+            font-size: .85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .valoracion-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .valoracion-contenido {
+            flex: 1;
+            min-width: 0;
+        }
+        .valoracion-meta {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            flex-wrap: wrap;
+            margin-bottom: .35rem;
+        }
+        .valoracion-autor {
+            color: #111827;
+            font-size: .95rem;
+            font-weight: 600;
+        }
+        .valoracion-estrellas {
+            color: #F59E0B;
+            font-size: .85rem;
+            letter-spacing: 1px;
+        }
+        .valoracion-fecha {
+            color: #9CA3AF;
+            font-size: .78rem;
+            margin-left: auto;
+        }
+        .valoracion-texto {
+            margin: 0;
+            color: #374151;
+            font-size: .92rem;
+            line-height: 1.55;
+        }
+        .valoracion-sin-texto {
+            color: #9CA3AF;
+        }
+
+        /* === Modal de reserva — formulario único === */
+        .reserva-resumen {
+            background: linear-gradient(135deg, #F8FBFF 0%, #EEF4FF 100%);
+            border: 1px solid rgba(37, 99, 235, 0.18);
+            border-radius: 12px;
+            padding: .85rem 1.1rem;
+        }
+        .reserva-resumen-titulo {
+            font-weight: 700;
+            color: #111827;
+            font-size: 1.02rem;
+            margin-bottom: .15rem;
+        }
+        .reserva-resumen-precio {
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+            color: #1D4ED8;
+            font-size: 1.05rem;
+        }
+        .reserva-bloque {
+            margin-bottom: 1.1rem;
+            padding-bottom: 1.1rem;
+            border-bottom: 1px dashed #E5E7EB;
+        }
+        .reserva-bloque:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .reserva-bloque .form-label {
+            font-weight: 600;
+            color: #111827;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+        }
+        .reserva-bloque .form-label .bi { color: #2563EB; }
+        .reserva-bloque .form-text {
+            font-size: .8rem;
+            color: #6B7280;
+            margin-top: .35rem;
+        }
+        .reserva-flecha {
+            color: #9CA3AF;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+        }
+        .reserva-info {
+            display: flex;
+            align-items: flex-start;
+            gap: .5rem;
+            background: #E8F1FF;
+            color: #1D4ED8;
+            padding: .65rem .9rem;
+            border-radius: 8px;
+            font-size: .85rem;
+            margin-top: 1rem;
+        }
+        .reserva-info .bi { font-size: 1rem; margin-top: 1px; }
     </style>
 </head>
 <body class="bg-light">
@@ -127,9 +323,39 @@ if ($usuario_logueado && $servicio) {
             <?php endif; ?>
         <?php endif; ?>
 
+<?php
+    // Cargar imágenes del servicio
+    require_once __DIR__ . '/../modelo/imagenServicioModelo.php';
+    $imgModelo = new ImagenServicioModelo($conexion);
+    $imagenes_servicio = $imgModelo->getImagenesPorServicio((int) $servicio['id']);
+    $img_principal = !empty($imagenes_servicio)
+        ? htmlspecialchars($imagenes_servicio[0]['url_publica'])
+        : 'https://via.placeholder.com/800x300.png?text=Sin+imagen';
+
+    // Cargar valoraciones del servicio (las que dejaron los clientes que ya lo contrataron)
+    require_once __DIR__ . '/../modelo/resenaModelo.php';
+    $resenaModelo = new ReseñaModelo($conexion);
+    $valoraciones_servicio = $resenaModelo->getReseñasPorServicio((int) $servicio['id'], 20);
+    $stats_servicio = $resenaModelo->getEstadisticasServicio((int) $servicio['id']);
+?>
         <div class="card servicio-card">
-            <img src="<?php echo htmlspecialchars($servicio['imagen'] ?? 'https://via.placeholder.com/800x300.png?text=Servicio'); ?>"
+            <img id="servicioImagenPrincipal"
+                 src="<?php echo $img_principal; ?>"
                  alt="<?php echo htmlspecialchars($servicio['titulo']); ?>" class="servicio-imagen">
+
+            <?php if (count($imagenes_servicio) > 1): ?>
+                <div class="servicio-galeria-miniaturas">
+                    <?php foreach ($imagenes_servicio as $idx => $img): ?>
+                        <button type="button"
+                                class="servicio-miniatura<?php echo $idx === 0 ? ' activa' : ''; ?>"
+                                data-url="<?php echo htmlspecialchars($img['url_publica']); ?>"
+                                aria-label="Ver imagen <?php echo $idx + 1; ?>">
+                            <img src="<?php echo htmlspecialchars($img['url_publica']); ?>"
+                                 alt="Miniatura <?php echo $idx + 1; ?>">
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
 
             <div class="card-body p-4">
                 <h2 class="card-title mb-3"><?php echo htmlspecialchars($servicio['titulo']); ?></h2>
@@ -150,38 +376,48 @@ if ($usuario_logueado && $servicio) {
                     </a>
                 </p>
 
-                <div class="d-flex gap-2 flex-wrap">
+                <div class="acciones-servicio">
                     <?php if (!$usuario_logueado): ?>
-                        <a href="loginVista.php" class="btn btn-primary btn-accion">
+                        <a href="loginVista.php" class="btn btn-primary">
                             <i class="bi bi-lock-fill" aria-hidden="true"></i> Inicia sesión para reservar
                         </a>
-                        <a href="loginVista.php" class="btn btn-outline-secondary btn-accion">
+                        <a href="loginVista.php" class="btn btn-outline-secondary">
                             <i class="bi bi-heart" aria-hidden="true"></i> Guardar en favoritos
                         </a>
                     <?php elseif (!$es_propietario && $servicio['activo']): ?>
-                        <button type="button" class="btn btn-primary btn-accion"
+                        <button type="button" class="btn btn-primary"
                                 data-bs-toggle="modal" data-bs-target="#modalReserva">
                             <i class="bi bi-calendar-event" aria-hidden="true"></i> Reservar servicio
                         </button>
 
+                        <!-- Botón Enviar mensaje al prestador (sin reservar) -->
+                        <form method="POST" action="chat.php?accion=abrir">
+                            <input type="hidden" name="prestador_id" value="<?php echo (int) $servicio['prestador_id']; ?>">
+                            <input type="hidden" name="servicio_id"  value="<?php echo (int) $servicio['id']; ?>">
+                            <button type="submit" class="btn btn-outline-primary"
+                                    title="Pregunta cualquier duda al prestador sin reservar todavía">
+                                <i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Enviar mensaje
+                            </button>
+                        </form>
+
                         <!-- Botón Favoritos -->
-                        <form method="POST" action="../controladores/favoritosController.php" class="btn-accion">
+                        <form method="POST" action="../controladores/favoritosController.php">
                             <input type="hidden" name="servicio_id" value="<?php echo (int) $servicio['id']; ?>">
                             <input type="hidden" name="accion" value="<?php echo $es_favorito ? 'quitar' : 'agregar'; ?>">
                             <button type="submit"
-                                    class="btn w-100 <?php echo $es_favorito ? 'btn-danger' : 'btn-outline-danger'; ?>"
+                                    class="btn <?php echo $es_favorito ? 'btn-danger' : 'btn-outline-danger'; ?>"
                                     title="<?php echo $es_favorito ? 'Quitar de favoritos' : 'Guardar en favoritos'; ?>">
                                 <?php echo $es_favorito ? '<i class="bi bi-heart-fill" aria-hidden="true"></i> En favoritos' : '<i class="bi bi-heart" aria-hidden="true"></i> Guardar'; ?>
                             </button>
                         </form>
 
-                        <button type="button" class="btn btn-outline-danger btn-accion"
+                        <button type="button" class="btn btn-outline-danger"
                                 data-bs-toggle="modal" data-bs-target="#modalReporte">
                             <i class="bi bi-flag-fill" aria-hidden="true"></i> Reportar servicio
                         </button>
                     <?php elseif ($es_propietario): ?>
-                        <div class="alert alert-info mb-0 w-100">
-                            ℹ️ Este es uno de tus servicios publicados.
+                        <div class="alert alert-info mb-0" style="grid-column: 1 / -1;">
+                            <i class="bi bi-info-circle-fill" aria-hidden="true"></i> Este es uno de tus servicios publicados.
                         </div>
                     <?php endif; ?>
                 </div>
@@ -193,96 +429,259 @@ if ($usuario_logueado && $servicio) {
             Servicio no encontrado.
         </div>
     <?php endif; ?>
+
+    <!-- ============================================================ -->
+    <!-- VALORACIONES DEL SERVICIO                                    -->
+    <!-- ============================================================ -->
+    <?php if ($servicio): ?>
+    <section class="card mt-4 valoraciones-servicio" aria-labelledby="tituloValoraciones">
+        <div class="card-body">
+            <header class="valoraciones-cabecera">
+                <h3 id="tituloValoraciones" class="mb-0">
+                    <i class="bi bi-star-fill" aria-hidden="true"></i>
+                    Valoraciones de clientes
+                </h3>
+                <?php if ($stats_servicio['total'] > 0): ?>
+                    <div class="valoraciones-resumen">
+                        <span class="valoraciones-media"><?php echo number_format($stats_servicio['media'], 1); ?></span>
+                        <span class="valoraciones-estrellas">
+                            <?php
+                            $media = (int) round($stats_servicio['media']);
+                            echo str_repeat('<i class="bi bi-star-fill" aria-hidden="true"></i>', $media);
+                            echo str_repeat('<i class="bi bi-star" aria-hidden="true"></i>', 5 - $media);
+                            ?>
+                        </span>
+                        <span class="valoraciones-total">
+                            (<?php echo $stats_servicio['total']; ?>
+                            valoraci<?php echo $stats_servicio['total'] === 1 ? 'ón' : 'ones'; ?>)
+                        </span>
+                    </div>
+                <?php endif; ?>
+            </header>
+
+            <?php if (empty($valoraciones_servicio)): ?>
+                <div class="valoraciones-vacio">
+                    <i class="bi bi-chat-square-text" aria-hidden="true"></i>
+                    <p>
+                        Este servicio aún no tiene valoraciones.
+                        <?php if ($usuario_logueado && !$es_propietario): ?>
+                            ¡Sé el primero en reservarlo y dejar tu reseña!
+                        <?php endif; ?>
+                    </p>
+                </div>
+            <?php else: ?>
+                <ul class="valoraciones-lista" role="list">
+                    <?php foreach ($valoraciones_servicio as $v): ?>
+                        <li class="valoracion-item">
+                            <div class="valoracion-avatar" aria-hidden="true">
+                                <?php if (!empty($v['autor_avatar'])): ?>
+                                    <img src="<?php echo htmlspecialchars($v['autor_avatar']); ?>"
+                                         alt="">
+                                <?php else: ?>
+                                    <?php echo strtoupper(substr($v['autor'], 0, 2)); ?>
+                                <?php endif; ?>
+                            </div>
+                            <div class="valoracion-contenido">
+                                <div class="valoracion-meta">
+                                    <strong class="valoracion-autor"><?php echo htmlspecialchars($v['autor']); ?></strong>
+                                    <span class="valoracion-estrellas">
+                                        <?php
+                                        $p = (int) $v['puntuacion'];
+                                        echo str_repeat('<i class="bi bi-star-fill" aria-hidden="true"></i>', $p);
+                                        echo str_repeat('<i class="bi bi-star" aria-hidden="true"></i>', 5 - $p);
+                                        ?>
+                                    </span>
+                                    <span class="valoracion-fecha">
+                                        <?php echo date('d/m/Y', strtotime($v['fecha'])); ?>
+                                    </span>
+                                </div>
+                                <?php if (!empty($v['comentario'])): ?>
+                                    <p class="valoracion-texto"><?php echo nl2br(htmlspecialchars($v['comentario'])); ?></p>
+                                <?php else: ?>
+                                    <p class="valoracion-texto valoracion-sin-texto">
+                                        <em>El cliente no dejó comentario escrito.</em>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+    </section>
+    <?php endif; ?>
 </div>
 
 <!-- ============================================================ -->
-<!-- MODAL DE RESERVA (3 PASOS)                                   -->
+<!-- MODAL DE RESERVA (formulario único, controles según unidad)  -->
 <!-- ============================================================ -->
 <?php if ($servicio && $usuario_logueado && !$es_propietario && $servicio['activo']): ?>
-<div class="modal fade" id="modalReserva" tabindex="-1" aria-hidden="true" role="dialog" aria-modal="true" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" role="dialog" aria-modal="true" tabindex="-1">
-        <div class="modal-content" role="dialog" aria-modal="true" tabindex="-1">
-            <div class="modal-header" role="dialog" aria-modal="true" tabindex="-1">
-                <h5 class="modal-title"><i class="bi bi-calendar-event" aria-hidden="true"></i> Reservar servicio</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<?php
+    // Normalizamos la unidad de cobro a uno de los modos soportados.
+    // Si llega un valor desconocido (por compatibilidad), usamos "trabajo".
+    $modoReserva = strtolower((string) ($servicio['unidad_cobro'] ?? 'trabajo'));
+    if (!in_array($modoReserva, ['hora','dia','sesion','trabajo','proyecto'], true)) {
+        $modoReserva = 'trabajo';
+    }
+?>
+<div class="modal fade" id="modalReserva" tabindex="-1" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-calendar-event" aria-hidden="true"></i>
+                    Reservar servicio
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
 
-            <form id="formReserva" method="POST" action="../controladores/reservar_servicio.php">
-                <input type="hidden" name="servicio_id" value="<?php echo (int) $servicio['id']; ?>">
+            <form id="formReserva" method="POST" action="../controladores/reservar_servicio.php" novalidate>
+                <input type="hidden" name="servicio_id"    value="<?php echo (int) $servicio['id']; ?>">
+                <input type="hidden" name="modo_reserva"   value="<?php echo htmlspecialchars($modoReserva); ?>">
                 <input type="hidden" name="fecha_servicio" id="reservaFechaServicio" value="">
+                <input type="hidden" name="fecha_fin"      id="reservaFechaFin"      value="">
 
-                <div class="modal-body" role="dialog" aria-modal="true" tabindex="-1">
-                    <!-- Indicador de pasos -->
-                    <div class="paso-indicador">
-                        <div class="punto activo" id="puntoPaso1">1</div>
-                        <div class="punto"        id="puntoPaso2">2</div>
-                        <div class="punto"        id="puntoPaso3">3</div>
-                    </div>
+                <div class="modal-body">
 
-                    <!-- Paso 1: Fecha -->
-                    <div class="paso-reserva activo" id="paso1">
-                        <h6 class="mb-3">1️⃣ Selecciona una fecha</h6>
-                        <p class="text-muted small">
-                            Solo se pueden reservar fechas a partir de mañana.
-                        </p>
-                        <input type="text" id="reservaFecha" class="form-control"
-                               placeholder="Selecciona una fecha..." required readonly>
-                    </div>
-
-                    <!-- Paso 2: Hora -->
-                    <div class="paso-reserva" id="paso2">
-                        <h6 class="mb-3">2️⃣ Selecciona una hora</h6>
-                        <p class="text-muted small">
-                            Horario disponible: de 08:00 a 20:00.
-                        </p>
-                        <select id="reservaHora" name="hora_servicio" class="form-select" required>
-                            <option value="">-- Selecciona una hora --</option>
-                            <?php for ($h = 8; $h <= 20; $h++): ?>
-                                <?php $hh = sprintf('%02d:00', $h); ?>
-                                <option value="<?php echo $hh; ?>"><?php echo $hh; ?></option>
-                            <?php endfor; ?>
-                        </select>
-                    </div>
-
-                    <!-- Paso 3: Resumen -->
-                    <div class="paso-reserva" id="paso3">
-                        <h6 class="mb-3">3️⃣ Confirma tu reserva</h6>
-                        <div class="border rounded p-3 bg-light">
-                            <div class="resumen-fila">
-                                <span class="clave">Servicio</span>
-                                <span><?php echo htmlspecialchars($servicio['titulo']); ?></span>
-                            </div>
-                            <div class="resumen-fila">
-                                <span class="clave">Precio</span>
-                                <span>
-                                    <?php echo number_format($servicio['precio'], 2); ?> €
-                                    / <?php echo htmlspecialchars($servicio['unidad_cobro']); ?>
-                                </span>
-                            </div>
-                            <div class="resumen-fila">
-                                <span class="clave">Fecha</span>
-                                <span id="resumenFecha">—</span>
-                            </div>
-                            <div class="resumen-fila">
-                                <span class="clave">Hora</span>
-                                <span id="resumenHora">—</span>
-                            </div>
+                    <!-- Resumen del servicio (siempre visible arriba) -->
+                    <div class="reserva-resumen mb-3">
+                        <div class="reserva-resumen-titulo"><?php echo htmlspecialchars($servicio['titulo']); ?></div>
+                        <div class="reserva-resumen-precio">
+                            <?php echo number_format($servicio['precio'], 2); ?> €
+                            <span class="text-muted">/ <?php echo htmlspecialchars($servicio['unidad_cobro']); ?></span>
                         </div>
-                        <p class="text-muted small mt-3 mb-0">
-                            La solicitud quedará pendiente hasta que el prestador la acepte.
-                        </p>
                     </div>
+
+                    <!-- ──────────────────────────────────────────── -->
+                    <!-- BLOQUE: SOLO DÍA  (unidad = dia)              -->
+                    <!-- ──────────────────────────────────────────── -->
+                    <?php if ($modoReserva === 'dia'): ?>
+                        <div class="reserva-bloque">
+                            <label class="form-label" for="reservaDiaUnico">
+                                <i class="bi bi-calendar3" aria-hidden="true"></i>
+                                Día del servicio
+                            </label>
+                            <input type="text" id="reservaDiaUnico" class="form-control"
+                                   placeholder="Selecciona un día..." required readonly>
+                            <p class="form-text">
+                                Este servicio se contrata por día completo. Selecciona el día en que necesitas el servicio.
+                            </p>
+                        </div>
+
+                    <!-- ──────────────────────────────────────────── -->
+                    <!-- BLOQUE: HORA  (unidad = hora)                 -->
+                    <!-- ──────────────────────────────────────────── -->
+                    <?php elseif ($modoReserva === 'hora'): ?>
+                        <div class="reserva-bloque">
+                            <label class="form-label" for="reservaDiaHora">
+                                <i class="bi bi-calendar3" aria-hidden="true"></i>
+                                Día del servicio
+                            </label>
+                            <input type="text" id="reservaDiaHora" class="form-control"
+                                   placeholder="Selecciona un día..." required readonly>
+                        </div>
+
+                        <div class="reserva-bloque">
+                            <label class="form-label">
+                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                Franja horaria (en punto, sin minutos)
+                            </label>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <select id="reservaHoraInicio" class="form-select" required>
+                                        <option value="">Hora inicio...</option>
+                                        <?php for ($h = 7; $h <= 22; $h++): ?>
+                                            <option value="<?php echo sprintf('%02d:00', $h); ?>">
+                                                <?php echo sprintf('%02d:00', $h); ?>
+                                            </option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </div>
+                                <div class="col-auto reserva-flecha"><i class="bi bi-arrow-right"></i></div>
+                                <div class="col">
+                                    <select id="reservaHoraFin" class="form-select" required>
+                                        <option value="">Hora fin...</option>
+                                        <?php for ($h = 8; $h <= 23; $h++): ?>
+                                            <option value="<?php echo sprintf('%02d:00', $h); ?>">
+                                                <?php echo sprintf('%02d:00', $h); ?>
+                                            </option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <p class="form-text">
+                                La hora final debe ser posterior a la inicial. Se cobrará por las horas reservadas.
+                            </p>
+                        </div>
+
+                    <!-- ──────────────────────────────────────────── -->
+                    <!-- BLOQUE: SESIÓN / TRABAJO  (con minutos)       -->
+                    <!-- ──────────────────────────────────────────── -->
+                    <?php elseif ($modoReserva === 'sesion' || $modoReserva === 'trabajo'): ?>
+                        <div class="reserva-bloque">
+                            <label class="form-label" for="reservaDiaSesion">
+                                <i class="bi bi-calendar3" aria-hidden="true"></i>
+                                Día del servicio
+                            </label>
+                            <input type="text" id="reservaDiaSesion" class="form-control"
+                                   placeholder="Selecciona un día..." required readonly>
+                        </div>
+
+                        <div class="reserva-bloque">
+                            <label class="form-label">
+                                <i class="bi bi-clock" aria-hidden="true"></i>
+                                Franja horaria (con minutos)
+                            </label>
+                            <div class="row g-2 align-items-center">
+                                <div class="col">
+                                    <input type="time" id="reservaHoraInicioMin" class="form-control"
+                                           step="300" required>
+                                </div>
+                                <div class="col-auto reserva-flecha"><i class="bi bi-arrow-right"></i></div>
+                                <div class="col">
+                                    <input type="time" id="reservaHoraFinMin" class="form-control"
+                                           step="300" required>
+                                </div>
+                            </div>
+                            <p class="form-text">
+                                Elige la hora de inicio y de fin con la precisión que necesites.
+                            </p>
+                        </div>
+
+                    <!-- ──────────────────────────────────────────── -->
+                    <!-- BLOQUE: PROYECTO  (rango de días)             -->
+                    <!-- ──────────────────────────────────────────── -->
+                    <?php elseif ($modoReserva === 'proyecto'): ?>
+                        <div class="reserva-bloque">
+                            <label class="form-label" for="reservaRangoDias">
+                                <i class="bi bi-calendar-range" aria-hidden="true"></i>
+                                Periodo del proyecto
+                            </label>
+                            <input type="text" id="reservaRangoDias" class="form-control"
+                                   placeholder="Selecciona inicio y fin..." required readonly>
+                            <p class="form-text">
+                                Selecciona el primer y el último día del proyecto. El servicio cubrirá todo el periodo elegido.
+                            </p>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Información persistente al pie del formulario -->
+                    <div class="reserva-info">
+                        <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+                        <span>La solicitud quedará <strong>pendiente</strong> hasta que el prestador la acepte.</span>
+                    </div>
+
+                    <!-- Mensaje de error en línea -->
+                    <div class="alert alert-danger d-none mt-3 mb-0" id="reservaError" role="alert"></div>
                 </div>
 
-                <div class="modal-footer" role="dialog" aria-modal="true" tabindex="-1">
-                    <button type="button" class="btn btn-outline-secondary" id="btnReservaAtras" disabled>
-                        ← Atrás
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Cancelar
                     </button>
-                    <button type="button" class="btn btn-primary" id="btnReservaSiguiente" disabled>
-                        Siguiente →
-                    </button>
-                    <button type="submit" class="btn btn-success d-none" id="btnReservaConfirmar">
-                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Confirmar reserva
+                    <button type="submit" class="btn btn-primary" id="btnReservaConfirmar">
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                        Confirmar reserva
                     </button>
                 </div>
             </form>
@@ -336,108 +735,174 @@ if ($usuario_logueado && $servicio) {
 <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 
 <script>
+/* ============================================================
+   Reserva — formulario único con controles según unidad de cobro
+   ============================================================ */
 (function () {
     var formReserva = document.getElementById('formReserva');
     if (!formReserva) return;
 
-    var pasoActual = 1;
-    var fechaElegida = null;
-    var horaElegida  = null;
+    var modo            = formReserva.querySelector('input[name="modo_reserva"]').value;
+    var inputFechaIni   = document.getElementById('reservaFechaServicio');
+    var inputFechaFin   = document.getElementById('reservaFechaFin');
+    var btnConfirmar    = document.getElementById('btnReservaConfirmar');
+    var errorBox        = document.getElementById('reservaError');
 
-    var inputFechaVisible = document.getElementById('reservaFecha');
-    var selectHora        = document.getElementById('reservaHora');
-    var inputHidden       = document.getElementById('reservaFechaServicio');
+    // Configuración común de flatpickr en español
+    if (window.flatpickr && window.flatpickr.l10ns && window.flatpickr.l10ns.es) {
+        flatpickr.localize(flatpickr.l10ns.es);
+    }
 
-    var btnAtras     = document.getElementById('btnReservaAtras');
-    var btnSiguiente = document.getElementById('btnReservaSiguiente');
-    var btnConfirmar = document.getElementById('btnReservaConfirmar');
+    // Helpers
+    function showError(msg) {
+        if (!errorBox) return;
+        errorBox.textContent = msg;
+        errorBox.classList.remove('d-none');
+    }
+    function clearError() {
+        if (!errorBox) return;
+        errorBox.classList.add('d-none');
+        errorBox.textContent = '';
+    }
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function ymd(date) {
+        return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+    }
 
-    var paso1 = document.getElementById('paso1');
-    var paso2 = document.getElementById('paso2');
-    var paso3 = document.getElementById('paso3');
+    // ─────────────────────────────────────────────
+    // Inicialización de pickers según el modo
+    // ─────────────────────────────────────────────
+    var fpDiaUnico, fpDiaHora, fpDiaSesion, fpRangoDias;
 
-    var puntos = [
-        document.getElementById('puntoPaso1'),
-        document.getElementById('puntoPaso2'),
-        document.getElementById('puntoPaso3')
-    ];
+    if (modo === 'dia') {
+        fpDiaUnico = flatpickr('#reservaDiaUnico', {
+            dateFormat: 'Y-m-d',
+            minDate:    'tomorrow',
+            disableMobile: true
+        });
+    }
+    else if (modo === 'hora') {
+        fpDiaHora = flatpickr('#reservaDiaHora', {
+            dateFormat: 'Y-m-d',
+            minDate:    'tomorrow',
+            disableMobile: true
+        });
+    }
+    else if (modo === 'sesion' || modo === 'trabajo') {
+        fpDiaSesion = flatpickr('#reservaDiaSesion', {
+            dateFormat: 'Y-m-d',
+            minDate:    'tomorrow',
+            disableMobile: true
+        });
+    }
+    else if (modo === 'proyecto') {
+        fpRangoDias = flatpickr('#reservaRangoDias', {
+            mode:       'range',
+            dateFormat: 'Y-m-d',
+            minDate:    'tomorrow',
+            disableMobile: true
+        });
+    }
 
-    flatpickr.localize(flatpickr.l10ns.es);
-    var fp = flatpickr(inputFechaVisible, {
-        dateFormat: "Y-m-d",
-        minDate: "tomorrow",
-        disableMobile: true,
-        onChange: function (selectedDates, dateStr) {
-            fechaElegida = dateStr || null;
-            actualizarBotones();
-        }
-    });
-
-    selectHora.addEventListener('change', function () {
-        horaElegida = this.value || null;
-        actualizarBotones();
-    });
-
-    btnSiguiente.addEventListener('click', function () {
-        if (pasoActual < 3) { pasoActual++; renderPaso(); }
-    });
-
-    btnAtras.addEventListener('click', function () {
-        if (pasoActual > 1) { pasoActual--; renderPaso(); }
-    });
-
+    // ─────────────────────────────────────────────
+    // Validación al enviar el formulario
+    // ─────────────────────────────────────────────
     formReserva.addEventListener('submit', function (e) {
-        if (!fechaElegida || !horaElegida) { e.preventDefault(); return; }
-        inputHidden.value = fechaElegida + ' ' + horaElegida + ':00';
+        clearError();
+
+        if (modo === 'dia') {
+            var dia = document.getElementById('reservaDiaUnico').value;
+            if (!dia) { e.preventDefault(); showError('Selecciona un día.'); return; }
+            // Día completo: de 00:00:00 a 23:59:59
+            inputFechaIni.value = dia + ' 00:00:00';
+            inputFechaFin.value = dia + ' 23:59:59';
+            return;
+        }
+
+        if (modo === 'hora') {
+            var diaH    = document.getElementById('reservaDiaHora').value;
+            var horaIni = document.getElementById('reservaHoraInicio').value;
+            var horaFin = document.getElementById('reservaHoraFin').value;
+            if (!diaH || !horaIni || !horaFin) {
+                e.preventDefault();
+                showError('Selecciona día, hora de inicio y hora de fin.');
+                return;
+            }
+            if (horaFin <= horaIni) {
+                e.preventDefault();
+                showError('La hora de fin debe ser posterior a la de inicio.');
+                return;
+            }
+            inputFechaIni.value = diaH + ' ' + horaIni + ':00';
+            inputFechaFin.value = diaH + ' ' + horaFin + ':00';
+            return;
+        }
+
+        if (modo === 'sesion' || modo === 'trabajo') {
+            var diaS    = document.getElementById('reservaDiaSesion').value;
+            var horaIni2 = document.getElementById('reservaHoraInicioMin').value;
+            var horaFin2 = document.getElementById('reservaHoraFinMin').value;
+            if (!diaS || !horaIni2 || !horaFin2) {
+                e.preventDefault();
+                showError('Completa día y franja horaria.');
+                return;
+            }
+            if (horaFin2 <= horaIni2) {
+                e.preventDefault();
+                showError('La hora de fin debe ser posterior a la de inicio.');
+                return;
+            }
+            inputFechaIni.value = diaS + ' ' + horaIni2 + ':00';
+            inputFechaFin.value = diaS + ' ' + horaFin2 + ':00';
+            return;
+        }
+
+        if (modo === 'proyecto') {
+            if (!fpRangoDias || !fpRangoDias.selectedDates || fpRangoDias.selectedDates.length < 2) {
+                e.preventDefault();
+                showError('Selecciona el día de inicio y el día de fin del proyecto.');
+                return;
+            }
+            var ini = fpRangoDias.selectedDates[0];
+            var fin = fpRangoDias.selectedDates[1];
+            inputFechaIni.value = ymd(ini) + ' 00:00:00';
+            inputFechaFin.value = ymd(fin) + ' 23:59:59';
+            return;
+        }
     });
 
-    function renderPaso() {
-        paso1.classList.toggle('activo', pasoActual === 1);
-        paso2.classList.toggle('activo', pasoActual === 2);
-        paso3.classList.toggle('activo', pasoActual === 3);
-
-        for (var i = 0; i < puntos.length; i++) {
-            puntos[i].classList.remove('activo', 'completado');
-            if (i + 1 < pasoActual)      puntos[i].classList.add('completado');
-            else if (i + 1 === pasoActual) puntos[i].classList.add('activo');
-        }
-
-        if (pasoActual === 3) {
-            document.getElementById('resumenFecha').textContent = fechaElegida || '—';
-            document.getElementById('resumenHora').textContent  = horaElegida || '—';
-        }
-        actualizarBotones();
-    }
-
-    function actualizarBotones() {
-        btnAtras.disabled = (pasoActual === 1);
-
-        if (pasoActual === 3) {
-            btnSiguiente.classList.add('d-none');
-            btnConfirmar.classList.remove('d-none');
-            btnConfirmar.disabled = !(fechaElegida && horaElegida);
-        } else {
-            btnSiguiente.classList.remove('d-none');
-            btnConfirmar.classList.add('d-none');
-            if (pasoActual === 1) btnSiguiente.disabled = !fechaElegida;
-            else if (pasoActual === 2) btnSiguiente.disabled = !horaElegida;
-        }
-    }
-
+    // Resetear el formulario al cerrar el modal
     var modalEl = document.getElementById('modalReserva');
-    modalEl.addEventListener('hidden.bs.modal', function () {
-        pasoActual = 1;
-        fechaElegida = null;
-        horaElegida  = null;
-        fp.clear();
-        selectHora.value = '';
-        inputHidden.value = '';
-        renderPaso();
-    });
-
-    renderPaso();
+    if (modalEl) {
+        modalEl.addEventListener('hidden.bs.modal', function () {
+            clearError();
+            formReserva.reset();
+            inputFechaIni.value = '';
+            inputFechaFin.value = '';
+            if (fpDiaUnico)  fpDiaUnico.clear();
+            if (fpDiaHora)   fpDiaHora.clear();
+            if (fpDiaSesion) fpDiaSesion.clear();
+            if (fpRangoDias) fpRangoDias.clear();
+        });
+    }
 })();
 
+/* ============================================================
+   Galería de miniaturas: clic cambia imagen principal
+   ============================================================ */
+(function () {
+    var principal = document.getElementById('servicioImagenPrincipal');
+    var minis = document.querySelectorAll('.servicio-miniatura');
+    if (!principal || !minis.length) return;
+
+    minis.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            principal.src = this.dataset.url;
+            minis.forEach(function (m) { m.classList.remove('activa'); });
+            this.classList.add('activa');
+        });
+    });
+})();
 </script>
 
 
